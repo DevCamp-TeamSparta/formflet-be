@@ -1,0 +1,18 @@
+### Create User
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "email": "test2@test.com",
+  "password": "test2",
+  "name": "test2",
+  "mobile": "010-1111-1111"
+}
+
+### Create User
+GET http://localhost:3000/users/checkemail
+Content-Type: application/json
+
+{
+  "email": "test1@test.com"
+}
