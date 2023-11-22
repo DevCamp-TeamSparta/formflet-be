@@ -5,12 +5,14 @@ import { LoginUserDto } from '../controllers/dtos/requests/login-user.dto';
 import { ResponseEntity } from '../../common-config/responseEntity';
 import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { RefreshTokenService } from './refresh-token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private refreshTokenService: RefreshTokenService,
   ) {}
 
   async logIn(signInUserDto: LoginUserDto, res: Response): Promise<ResponseEntity<string>> {
@@ -32,7 +34,7 @@ export class AuthService {
     return ResponseEntity.OK(`${user.name}님 환영합니다.`);
   }
 
-  async generateAccessToken({ user, res }): Promise<string> {
+  async generateAccessToken({ user, res }): Promise<void> {
     const accessToken: string = this.jwtService.sign(
       {
         id: user.id,
@@ -47,11 +49,9 @@ export class AuthService {
     );
 
     res.setHeader('Authorization', `Bearer ${accessToken}`);
-
-    return;
   }
 
-  async generateRefreshToken({ user, res }): Promise<string> {
+  async generateRefreshToken({ user, res }): Promise<void> {
     const refreshToken: string = this.jwtService.sign(
       {
         id: user.id,
@@ -67,6 +67,6 @@ export class AuthService {
 
     res.setHeader('Refresh-Token', `Bearer ${refreshToken}`);
 
-    return;
+    await this.refreshTokenService.saveRefreshToken(user.id, refreshToken);
   }
 }
