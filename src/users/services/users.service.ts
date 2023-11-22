@@ -1,11 +1,10 @@
-import { ConflictException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../controllers/dtos/requests/create-user.dto';
 import { UpdateUserDto } from '../controllers/dtos/requests/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { CheckEmailDto } from '../controllers/dtos/requests/check-email.dto';
 import { ResponseEntity } from 'src/common-config/responseEntity';
 import { plainToInstance } from 'class-transformer';
 import { UserInfoDto } from '../controllers/dtos/responses/user-info.dto';
@@ -25,8 +24,8 @@ export class UsersService {
     return ResponseEntity.OK_WITH_DATA(`${user.name}님 가입을 환영합니다.`, data);
   }
 
-  async checkEmail(checkUserDto: CheckEmailDto): Promise<ResponseEntity<string>> {
-    const user = await this.repository.findOne({ where: { email: checkUserDto.email } });
+  async checkEmail(email: string): Promise<ResponseEntity<string>> {
+    const user = await this.repository.findOne({ where: { email: email } });
 
     if (user) {
       throw new ConflictException('이미 존재하는 email 입니다.');
