@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './users/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { RefreshToken } from './users/entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ConfigModule } from '@nestjs/config';
       username: 'formflet',
       password: '1q2w3e',
       database: 'formflet',
-      entities: [User],
+      entities: [User, RefreshToken],
       synchronize: true,
     }),
     ConfigModule.forRoot({
