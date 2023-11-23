@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, ValidationPipe } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from './dtos/requests/create-user.dto';
 import { UpdateUserDto } from './dtos/requests/update-user.dto';
@@ -13,7 +13,7 @@ export class UsersController {
   ) {}
 
   @Post('/signup')
-  signUp(@Body() createUserDto: CreateUserDto) {
+  signUp(@Body(ValidationPipe) createUserDto: CreateUserDto) {
     return this.usersService.signUp(createUserDto);
   }
 

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UpdateUserDto } from '../controllers/dtos/requests/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
@@ -17,7 +17,16 @@ export class UsersService {
     createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
 
     const user: User = this.repository.create(createUserDto);
-    await this.repository.save(user);
+
+    try {
+      await this.repository.save(user);
+    } catch (e) {
+      if (e.errno === 1062) {
+        throw new ConflictException('이미 존재하는 email 입니다.');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
 
     const data: UserInfoDto = plainToInstance(UserInfoDto, user);
 
