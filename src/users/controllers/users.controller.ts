@@ -12,12 +12,12 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post('/signup')
+  @Post('/join')
   signUp(@Body(ValidationPipe) createUserDto: CreateUserDto) {
     return this.usersService.signUp(createUserDto);
   }
 
-  @Get('/checkemail')
+  @Get('/check-email')
   checkEmail(@Query('email') email: string) {
     console.log(email);
     return this.usersService.checkEmail(email);
