@@ -13,7 +13,7 @@ import { plainToInstance } from 'class-transformer';
 export class UsersService {
   constructor(@InjectRepository(User) private repository: Repository<User>) {}
 
-  async signUp(createUserDto: CreateUserDto): Promise<ResponseEntity<UserInfoDto>> {
+  async joinUser(createUserDto: CreateUserDto): Promise<ResponseEntity<UserInfoDto>> {
     createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
 
     const user: User = this.repository.create(createUserDto);

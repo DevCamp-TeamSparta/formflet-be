@@ -13,8 +13,8 @@ export class UsersController {
   ) {}
 
   @Post('/join')
-  signUp(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.usersService.signUp(createUserDto);
+  joinUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+    return this.usersService.joinUser(createUserDto);
   }
 
   @Get('/check-email')
