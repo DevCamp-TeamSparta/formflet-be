@@ -3,10 +3,10 @@ import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { AuthService } from './services/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { RefreshTokenService } from './services/refresh-token.service';
+import { RefreshToken } from '../auth/entities/refresh-token.entity';
+import { RefreshTokenService } from '../auth/services/refresh-token.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, RefreshToken])],

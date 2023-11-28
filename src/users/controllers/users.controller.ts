@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, Validati
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from './dtos/requests/create-user.dto';
 import { UpdateUserDto } from './dtos/requests/update-user.dto';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { LoginUserDto } from './dtos/requests/login-user.dto';
 
 @Controller('users')
@@ -21,11 +21,6 @@ export class UsersController {
   checkEmail(@Query('email') email: string) {
     console.log(email);
     return this.usersService.checkEmail(email);
-  }
-
-  @Post('/login')
-  logIn(@Body() signInUserDto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
-    return this.authService.logIn(signInUserDto, res);
   }
 
   @Patch(':id')
