@@ -31,5 +31,5 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       run: |
         docker build -t studio-formflet-test .
-        docker tag studio-formflet-test:latest ${{ secrets.AWS_ELASTIC_CONTAINER_REGISTRY_URI }}:latest
-        docker push ${{ secrets.AWS_ELASTIC_CONTAINER_REGISTRY_URI }}:latest
+        docker tag studio-formflet-test:latest ${{ secrets.AWS_TEST_ECR_URI }}:latest
+        docker push ${{ secrets.AWS_TEST_ECR_URI }}:latest
