@@ -12,18 +12,19 @@ import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'formflet',
-      password: '1q2w3e',
-      database: 'formflet',
-      entities: [User, RefreshToken],
-      synchronize: true,
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [User, RefreshToken],
+      synchronize: true,
+      logging: true,
     }),
     UsersModule,
     AuthModule,
