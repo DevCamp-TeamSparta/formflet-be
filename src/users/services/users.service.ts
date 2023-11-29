@@ -46,12 +46,4 @@ export class UsersService {
   async findOne(email: string): Promise<User> {
     return await this.repository.findOne({ where: { email: email } });
   }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 }
