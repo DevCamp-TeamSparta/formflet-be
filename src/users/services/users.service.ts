@@ -3,7 +3,7 @@ import { UpdateUserDto } from '../controllers/dtos/requests/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { ResponseEntity } from 'src/common-config/responseEntity';
+import { ResponseEntity } from 'src/configs/response-entity';
 import { CreateUserDto } from '../controllers/dtos/requests/create-user.dto';
 import { UserInfoDto } from '../controllers/dtos/responses/user-info.dto';
 import * as bcrypt from 'bcrypt';
