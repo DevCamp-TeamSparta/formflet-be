@@ -7,6 +7,8 @@ import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RefreshToken } from './auth/entities/refresh-token.entity';
+import { PagesModule } from './pages/pages.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { RefreshToken } from './auth/entities/refresh-token.entity';
     }),
     UsersModule,
     AuthModule,
+    PagesModule,
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
