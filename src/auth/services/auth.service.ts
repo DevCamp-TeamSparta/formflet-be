@@ -1,22 +1,22 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../../users/services/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from '../../users/controllers/dtos/requests/login-user.dto';
 import { ResponseEntity } from '../../configs/response-entity';
 import { User } from '../../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { RefreshTokenService } from './refresh-token.service';
+import { UserRepository } from '../../users/repositories/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-    private refreshTokenService: RefreshTokenService,
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+    private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   async logIn(signInUserDto: LoginUserDto, res: Response): Promise<ResponseEntity<string>> {
-    const user: User = await this.usersService.findOne(signInUserDto.email);
+    const user: User = await this.userRepository.findByEmail(signInUserDto.email);
 
     if (!user) {
       throw new UnauthorizedException('존재하지 않는 email 입니다.');
