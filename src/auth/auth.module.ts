@@ -8,10 +8,11 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { RefreshTokenService } from './services/refresh-token.service';
 import { UsersModule } from '../users/users.module';
 import { UserRepository } from '../users/repositories/user.repository';
+import { RefreshTokenRepository } from './repositories/refresh-token.repository';
 
 @Module({
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([User, RefreshToken]), UsersModule],
   controllers: [AuthController],
-  providers: [AuthService, RefreshTokenService, UserRepository],
+  providers: [AuthService, RefreshTokenService, UserRepository, RefreshTokenRepository],
 })
 export class AuthModule {}

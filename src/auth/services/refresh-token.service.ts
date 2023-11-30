@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RefreshToken } from '../entities/refresh-token.entity';
-import { Repository } from 'typeorm';
+import { RefreshTokenRepository } from '../repositories/refresh-token.repository';
 import * as bcrypt from 'bcrypt';
+import { RefreshTokenInterface } from '../interfaces/refresh-token.interface';
 
 @Injectable()
 export class RefreshTokenService {
-  constructor(@InjectRepository(RefreshToken) private repository: Repository<RefreshToken>) {}
+  constructor(private readonly refreshTokenRepository: RefreshTokenRepository) {}
 
   async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
     const hashedRefreshToken: string = await bcrypt.hash(refreshToken, 10);
 
-    const refreshTokenEntity: RefreshToken = this.repository.create({
+    const refreshTokenEntity: RefreshTokenInterface = this.refreshTokenRepository.create({
       userId: userId,
       refreshToken: hashedRefreshToken,
     });
 
-    await this.repository.save(refreshTokenEntity);
+    await this.refreshTokenRepository.save(refreshTokenEntity);
   }
 }
