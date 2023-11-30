@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { RegisterDomainDto } from '../../pages/dtos/requests/register-domain.dto';
 import * as AWS from 'aws-sdk';
+import { ResponseEntity } from '../../configs/response-entity';
+import { RegisterDomainDto } from '../../pages/dtos/requests/register-domain.dto';
 
 @Injectable()
 export class AwsService {
@@ -8,13 +9,12 @@ export class AwsService {
 
   constructor() {
     AWS.config.update({
-      accessKeyId: 'sdaf',
       region: process.env.REGION,
     });
     this.route53 = new AWS.Route53();
   }
 
-  async registerDomain(registerDomainDto: RegisterDomainDto): Promise<string> {
+  async registerDomain(registerDomainDto: RegisterDomainDto): Promise<ResponseEntity<string>> {
     const registerDomain: string = registerDomainDto.domain;
 
     const hostedZoneId: string = process.env.HOSTED_ZONE_ID; // Route 53에서 찾을 수 있는 호스팅 존 ID
@@ -45,10 +45,11 @@ export class AwsService {
 
     try {
       await this.route53.changeResourceRecordSets(params).promise();
-      return `${registerDomain}.${baseDomain}`;
+
+      return ResponseEntity.OK('등록이 완료되었습니다.');
     } catch (error) {
       console.error(error);
-      throw new InternalServerErrorException('오류발생');
+      throw new InternalServerErrorException();
     }
   }
 }
