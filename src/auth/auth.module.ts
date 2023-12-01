@@ -4,15 +4,13 @@ import { AuthController } from './controllers/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { RefreshTokenService } from './services/refresh-token.service';
 import { UsersModule } from '../users/users.module';
-import { UserRepository } from '../users/repositories/user.repository';
-import { RefreshTokenRepository } from './repositories/refresh-token.repository';
+import { TokenModule } from '../token/token.module';
 
 @Module({
-  imports: [JwtModule.register({}), TypeOrmModule.forFeature([User, RefreshToken]), UsersModule],
+  imports: [JwtModule.register({}), TypeOrmModule.forFeature([User]), UsersModule, TokenModule],
   controllers: [AuthController],
-  providers: [AuthService, RefreshTokenService, UserRepository, RefreshTokenRepository],
+  providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

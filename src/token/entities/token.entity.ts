@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
-export class RefreshToken {
+export class Token {
   @PrimaryColumn()
   userId: number;
 

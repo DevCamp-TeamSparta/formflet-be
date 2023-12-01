@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PagesModule } from './pages/pages.module';
 import { AwsModule } from './aws/aws.module';
 import { typeOrmConfig } from './configs/type-orm.config';
+import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { typeOrmConfig } from './configs/type-orm.config';
     AuthModule,
     PagesModule,
     AwsModule,
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
