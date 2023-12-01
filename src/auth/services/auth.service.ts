@@ -3,7 +3,7 @@ import { LoginUserDto } from '../../users/controllers/dtos/requests/login-user.d
 import { ResponseEntity } from '../../configs/response-entity';
 import { User } from '../../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { TokenService } from '../../token/services/token.service';
+import { TokenService } from './token.service';
 import { UserRepository } from '../../users/repositories/user.repository';
 
 @Injectable()

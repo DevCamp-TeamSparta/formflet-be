@@ -20,7 +20,7 @@ export class TokenService {
         mobile: user.mobile,
       },
       {
-        secret: process.env.ACCESS_TOKEN_SECRET_KEY,
+        secret: process.env.TOKEN_SECRET_KEY,
         expiresIn: '60m',
       },
     );
@@ -37,7 +37,7 @@ export class TokenService {
         mobile: user.mobile,
       },
       {
-        secret: process.env.REFRESH_TOKEN_SECRET_KEY,
+        secret: process.env.TOKEN_SECRET_KEY,
         expiresIn: '2w',
       },
     );
