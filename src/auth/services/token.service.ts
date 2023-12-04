@@ -25,7 +25,7 @@ export class TokenService {
       },
     );
 
-    res.setHeader('Access-Token', `Bearer ${accessToken}`);
+    res.setHeader('Authorization', `Bearer ${accessToken}`);
   }
 
   async generateRefreshToken({ user, res }): Promise<void> {
