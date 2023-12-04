@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PagesRequestDto } from '../dto/requests/pages-request.dto';
-import { PagesResponseDto } from '../dto/responses/pages-response.dto';
+import { PagesRequestDto } from '../controllers/dto/requests/pages-request.dto';
+import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 import { PagesRepository } from '../repositories/pages.repository';
 import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';

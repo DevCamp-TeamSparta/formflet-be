@@ -6,6 +6,7 @@ import { User } from '../../users/entities/user.entity';
 import { DomainsRequestDto } from './dtos/requests/domains-request.dto';
 import { ResponseEntity } from '../../configs/response-entity';
 import { DomainsResponseDto } from './dtos/responses/domains-response.dto';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('domains')
 @UseGuards(AuthGuard())
@@ -13,6 +14,10 @@ export class DomainsController {
   constructor(private readonly domainsService: DomainsService) {}
 
   @Post('/register')
+  @ApiOperation({
+    summary: '도메인 등록 API',
+    description: '도메인 등록 API',
+  })
   async registerDomain(
     @GetUser() user: User,
     @Body() domainsRequestDto: DomainsRequestDto,

@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,19 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'Refresh-Token'],
     exposedHeaders: ['Content-Type', 'Authorization', 'Refresh-Token'],
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Formflet API')
+    .setDescription('Formflet API description')
+    .setVersion('1.0.0')
+    .addTag('swagger')
+    .build();
+
+  // config를 바탕으로 swagger document 생성
+  const document = SwaggerModule.createDocument(app, config);
+  // Swagger UI에 대한 path를 연결함
+  // .setup('swagger ui endpoint', app, swagger_document)
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
