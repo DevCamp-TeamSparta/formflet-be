@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ResponseEntity } from 'src/configs/response-entity';
-import { CreateUserDto } from '../controllers/dtos/requests/create-user.dto';
-import { UserInfoDto } from '../controllers/dtos/responses/user-info.dto';
+import { JoinRequestDto } from '../controllers/dtos/requests/join-request.dto';
+import { UsersResponseDto } from '../controllers/dtos/responses/users-response.dto';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { UserRepository } from '../repositories/user.repository';
@@ -11,7 +11,7 @@ import { UserInterface } from '../interfaces/user.interface';
 export class UsersService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async joinUser(createUserDto: CreateUserDto): Promise<ResponseEntity<UserInfoDto>> {
+  async joinUser(createUserDto: JoinRequestDto): Promise<ResponseEntity<UsersResponseDto>> {
     createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
 
     const user: UserInterface = this.userRepository.create(createUserDto);
@@ -26,7 +26,7 @@ export class UsersService {
       }
     }
 
-    const data: UserInfoDto = plainToInstance(UserInfoDto, user);
+    const data: UsersResponseDto = plainToInstance(UsersResponseDto, user);
 
     return ResponseEntity.OK_WITH_DATA(`${user.name}님 가입을 환영합니다.`, data);
   }

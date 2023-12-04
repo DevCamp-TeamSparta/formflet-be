@@ -1,7 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class UserInfoDto {
+export class UsersResponseDto {
   @Expose()
   private readonly id: number;
 
@@ -13,4 +13,7 @@ export class UserInfoDto {
 
   @Expose()
   private readonly mobile: string;
+
+  @Expose()
+  private readonly job: string;
 }

@@ -18,6 +18,9 @@ export class User {
   @Column()
   mobile: string;
 
+  @Column()
+  job: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
