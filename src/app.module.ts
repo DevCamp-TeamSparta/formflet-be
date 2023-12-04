@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { typeOrmConfig } from './configs/type-orm.config';
 import { DomainsModule } from './domains/domains.module';
+import { PagesModule } from './pages/pages.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { DomainsModule } from './domains/domains.module';
     UsersModule,
     AuthModule,
     DomainsModule,
+    PagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
