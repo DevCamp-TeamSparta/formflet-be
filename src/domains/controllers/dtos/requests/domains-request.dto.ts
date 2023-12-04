@@ -2,9 +2,14 @@ import { Exclude, Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 @Exclude()
-export class RegisterDomainDto {
+export class DomainsRequestDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
-  domain: string;
+  customDomain: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  value: string;
 }
