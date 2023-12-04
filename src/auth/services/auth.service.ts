@@ -1,10 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginUserDto } from '../../users/controllers/dtos/requests/login-user.dto';
 import { ResponseEntity } from '../../configs/response-entity';
 import { User } from '../../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { TokenService } from './token.service';
 import { UserRepository } from '../../users/repositories/user.repository';
+import { LoginRequestDto } from '../controllers/dtos/requests/login-request.dto';
+import { UsersResponseDto } from '../../users/controllers/dtos/responses/users-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -13,22 +15,19 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async logIn(signInUserDto: LoginUserDto, res: Response): Promise<ResponseEntity<string>> {
-    const user: User = await this.userRepository.findByEmail(signInUserDto.email);
+  async logIn(requestDto: LoginRequestDto, res: Response): Promise<ResponseEntity<UsersResponseDto>> {
+    const user: User = await this.userRepository.findByEmail(requestDto.email);
+    const isAuth: boolean = await bcrypt.compare(requestDto.password, user.password);
 
-    if (!user) {
-      throw new UnauthorizedException('존재하지 않는 email 입니다.');
-    }
-
-    const isAuth: boolean = await bcrypt.compare(signInUserDto.password, user.password);
-
-    if (!isAuth) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    if (!user || !isAuth) {
+      throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');
     }
 
     await this.tokenService.generateAccessToken({ user, res });
     await this.tokenService.generateRefreshToken({ user, res });
 
-    return ResponseEntity.OK(`${user.name}님 환영합니다.`);
+    const data: UsersResponseDto = plainToInstance(UsersResponseDto, user);
+
+    return ResponseEntity.OK_WITH_DATA(`${user.name}님 환영합니다.`, data);
   }
 }

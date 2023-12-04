@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { User } from '../../users/entities/user.entity';
-import { UserInfoDto } from '../../users/controllers/dtos/responses/user-info.dto';
+import { UsersResponseDto } from '../../users/controllers/dtos/responses/users-response.dto';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
@@ -24,6 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('유효하지 않은 사용자 입니다.');
     }
 
-    return plainToInstance(UserInfoDto, user);
+    return plainToInstance(UsersResponseDto, user);
   }
 }

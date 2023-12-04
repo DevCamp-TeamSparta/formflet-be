@@ -1,22 +1,18 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
-import { LoginUserDto } from '../../users/controllers/dtos/requests/login-user.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { UserInfoDto } from '../../users/controllers/dtos/responses/user-info.dto';
-import { GetUser } from '../decorator/get-user.decorator';
+import { UsersResponseDto } from '../../users/controllers/dtos/responses/users-response.dto';
+import { LoginRequestDto } from './dtos/requests/login-request.dto';
+import { ResponseEntity } from '../../configs/response-entity';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/login')
-  logIn(@Body() signInUserDto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
-    return this.authService.logIn(signInUserDto, res);
-  }
-
-  @Post('/test')
-  @UseGuards(AuthGuard())
-  test(@GetUser() user: UserInfoDto) {
-    console.log(user);
+  async logIn(
+    @Body() requestDto: LoginRequestDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ResponseEntity<UsersResponseDto>> {
+    return this.authService.logIn(requestDto, res);
   }
 }

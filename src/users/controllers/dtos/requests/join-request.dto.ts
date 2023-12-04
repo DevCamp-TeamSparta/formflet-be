@@ -2,7 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 
 @Exclude()
-export class CreateUserDto {
+export class JoinRequestDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
@@ -24,4 +24,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   mobile: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  job: string;
 }
