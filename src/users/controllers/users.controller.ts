@@ -3,7 +3,7 @@ import { UsersService } from '../services/users.service';
 import { JoinRequestDto } from './dtos/requests/join-request.dto';
 import { ApiOperation } from '@nestjs/swagger';
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

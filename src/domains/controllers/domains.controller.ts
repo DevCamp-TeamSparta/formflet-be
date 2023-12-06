@@ -8,7 +8,7 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { DomainsResponseDto } from './dtos/responses/domains-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 
-@Controller('domains')
+@Controller('api/domains')
 @UseGuards(AuthGuard())
 export class DomainsController {
   constructor(private readonly domainsService: DomainsService) {}

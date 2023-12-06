@@ -8,7 +8,7 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 
-@Controller('pages')
+@Controller('api/pages')
 @UseGuards(AuthGuard())
 export class PagesController {
   constructor(private readonly pagesService: PagesService) {}
