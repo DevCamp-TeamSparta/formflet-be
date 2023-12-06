@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { PagesService } from '../services/pages.service';
 import { PagesRequestDto } from './dto/requests/pages-request.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -7,6 +7,7 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { PageDetail } from '../entities/pages-detail.entity';
 
 @Controller('pages')
 @UseGuards(AuthGuard())
@@ -23,5 +24,14 @@ export class PagesController {
     @Body() pagesRequestDto: PagesRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.registerPage(user, pagesRequestDto);
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '등록한 노션 페이지 불러오기 API',
+    description: '등록한 노션 페이지 불러오기 API',
+  })
+  async getPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+    return this.pagesService.getPageByUserId(user);
   }
 }

@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { PagesRequestDto } from '../requests/pages-request.dto';
+import { PageDetail } from '../../../entities/pages-detail.entity';
 
-export class PagesResponseDto extends PartialType(PagesRequestDto) {}
+export class PagesResponseDto {
+  readonly id: number;
+  readonly userId: number;
+  readonly pageUrl: string;
+  readonly pageDetails: PageDetail[];
+}
