@@ -53,7 +53,6 @@ export class DomainsService {
     try {
       await this.route53.changeResourceRecordSets(params).promise();
     } catch (error) {
-      console.error(error);
       throw new InternalServerErrorException();
     }
 

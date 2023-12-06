@@ -22,7 +22,6 @@ export class UsersController {
     description: '이메일 중복체크 API',
   })
   checkEmail(@Query('email') email: string) {
-    console.log(email);
     return this.usersService.checkEmail(email);
   }
 }
