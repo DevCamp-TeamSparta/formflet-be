@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { TokenRepository } from '../repository/token.repository';
 import * as bcrypt from 'bcrypt';
 import { TokenInterface } from '../interfaces/token.interface';
 import { JwtService } from '@nestjs/jwt';
+import { DeleteResult } from 'typeorm/query-builder/result/DeleteResult';
 
 @Injectable()
 export class TokenService {
+  private readonly logger: Logger = new Logger('TokenService');
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly tokenRepository: TokenRepository,
@@ -56,5 +59,15 @@ export class TokenService {
     });
 
     await this.tokenRepository.save(tokenEntity);
+  }
+
+  async deleteRefreshToken(userId: number): Promise<void> {
+    this.logger.log('start delete refreshToken');
+
+    try {
+      await this.tokenRepository.delete(userId);
+    } catch (e) {
+      throw new InternalServerErrorException('refreshToken 삭제 오류발생');
+    }
   }
 }

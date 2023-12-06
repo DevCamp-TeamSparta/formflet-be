@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Exclude()
-export class LoginRequestDto {
+export class AuthRequestDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
