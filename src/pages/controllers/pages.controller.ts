@@ -7,7 +7,6 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { PageDetail } from '../entities/pages-detail.entity';
 
 @Controller('pages')
 @UseGuards(AuthGuard())
