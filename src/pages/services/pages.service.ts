@@ -5,12 +5,12 @@ import { PagesRepository } from '../repositories/pages.repository';
 import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/pages.entity';
-import { plainToInstance } from 'class-transformer';
 import { OriginalPagesRepository } from '../repositories/original-pages.repository';
 import { OriginalPage } from '../entities/original-pages.entity';
 import { EditPagesRepository } from '../repositories/edit-pages.repository';
 import { EditPage } from '../entities/edit-pages.entity';
 import puppeteer from 'puppeteer';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class PagesService {
@@ -45,32 +45,6 @@ export class PagesService {
 
     this.logger.log('finished registerPage');
     return ResponseEntity.OK('노션 페이지 저장 완료');
-  }
-
-  async registerOriginalPage(content: string): Promise<OriginalPage> {
-    this.logger.log('start registerOriginalPage');
-
-    const originalPage: OriginalPage = this.originalPagesRepository.create({ content });
-    return await this.originalPagesRepository.save(originalPage);
-  }
-
-  async registerEditPage(content: string): Promise<EditPage> {
-    this.logger.log('start registerEditPage');
-
-    const editPage: EditPage = this.editPagesRepository.create({ content });
-    return await this.editPagesRepository.save(editPage);
-  }
-
-  async getPageByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
-    try {
-      const page: Page[] = await this.pagesRepository.findAllByUserId(user);
-
-      const data: PagesResponseDto[] = plainToInstance(PagesResponseDto, page);
-
-      return ResponseEntity.OK_WITH_DATA('저장된 노션 페이지 불러오기 성공', data);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
   }
 
   async scrapNotionPage(pageUrl: string) {
@@ -113,6 +87,32 @@ export class PagesService {
       if (isClosedToggleExist) {
         await page.waitForTimeout(1000);
       }
+    }
+  }
+
+  async registerOriginalPage(content: string): Promise<OriginalPage> {
+    this.logger.log('start registerOriginalPage');
+
+    const originalPage: OriginalPage = this.originalPagesRepository.create({ content });
+    return await this.originalPagesRepository.save(originalPage);
+  }
+
+  async registerEditPage(content: string): Promise<EditPage> {
+    this.logger.log('start registerEditPage');
+
+    const editPage: EditPage = this.editPagesRepository.create({ content });
+    return await this.editPagesRepository.save(editPage);
+  }
+
+  async getAllPageByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+    try {
+      const pageList: Page[] = await this.pagesRepository.findAllByUserId(user);
+
+      const data: PagesResponseDto[] = plainToInstance(PagesResponseDto, pageList);
+
+      return ResponseEntity.OK_WITH_DATA('전체 노션 페이지 조회 성공', data);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 }

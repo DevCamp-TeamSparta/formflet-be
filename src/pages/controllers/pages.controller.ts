@@ -24,10 +24,10 @@ export class PagesController {
 
   @Get()
   @ApiOperation({
-    summary: '등록한 노션 페이지 불러오기 API',
-    description: '등록한 노션 페이지 불러오기 API',
+    summary: '전체 노션 페이지 조회 API',
+    description: '전체 노션 페이지 조회 API',
   })
-  async getPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
-    return this.pagesService.getPageByUserId(user);
+  async getAllPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+    return this.pagesService.getAllPageByUserId(user);
   }
 }
