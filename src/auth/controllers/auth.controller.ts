@@ -23,7 +23,6 @@ export class AuthController {
   @Delete('/logout')
   @ApiOperation({ summary: '로그아웃 API', description: '로그아웃 API' })
   async logout(@GetUser() user: User): Promise<ResponseEntity<string>> {
-    console.log(user);
     return this.authService.logout(user);
   }
 }

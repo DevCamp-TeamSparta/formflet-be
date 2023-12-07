@@ -9,10 +9,4 @@ export class PagesRequestDto {
   @IsNotEmpty()
   @ApiProperty({ description: '노션 페이지 URL' })
   pageUrl: string;
-
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ description: '노선 페이지 내용' })
-  content: string;
 }

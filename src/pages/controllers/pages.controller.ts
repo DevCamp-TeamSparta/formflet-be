@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { PagesService } from '../services/pages.service';
 import { PagesRequestDto } from './dto/requests/pages-request.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,10 +18,7 @@ export class PagesController {
     summary: '노션 페이지 등록 API',
     description: '노션 페이지 등록 API',
   })
-  async registerPage(
-    @GetUser() user: User,
-    @Body() pagesRequestDto: PagesRequestDto,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async registerPage(@GetUser() user: User, @Body() pagesRequestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
     return this.pagesService.registerPage(user, pagesRequestDto);
   }
 
