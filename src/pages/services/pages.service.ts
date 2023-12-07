@@ -9,8 +9,8 @@ import { plainToInstance } from 'class-transformer';
 import { OriginalPagesRepository } from '../repositories/original-pages.repository';
 import { OriginalPage } from '../entities/original-pages.entity';
 import { EditPagesRepository } from '../repositories/edit-pages.repository';
-import puppeteer from 'puppeteer';
 import { EditPage } from '../entities/edit-pages.entity';
+import puppeteer from 'puppeteer';
 
 @Injectable()
 export class PagesService {
@@ -23,22 +23,27 @@ export class PagesService {
   ) {}
 
   async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
+    this.logger.log('start registerPage');
+    this.logger.log(`title: ${requestDto.title}`);
+    this.logger.log(`customDomain: ${requestDto.customDomain}`);
+    this.logger.log(`pageUrl: ${requestDto.pageUrl}`);
+
     // notion page scraping
     const content: string = await this.scrapNotionPage(requestDto.pageUrl);
 
     const userId: number = user.id;
-    const pageUrl: string = requestDto.pageUrl;
+    const { title, customDomain, pageUrl } = requestDto;
 
-    this.logger.log(`userId: ${userId}`);
-    this.logger.log(`pageUrl: ${pageUrl}`);
+    const [originalPage, editPage] = await Promise.all([
+      this.registerOriginalPage(content),
+      this.registerEditPage(content),
+    ]);
 
-    const originalPage: OriginalPage = await this.registerOriginalPage(content);
-    const editPage: EditPage = await this.registerEditPage(content);
-
-    const page: Page = this.pagesRepository.create({ userId, pageUrl, originalPage, editPage });
+    const page: Page = this.pagesRepository.create({ userId, title, customDomain, pageUrl, originalPage, editPage });
 
     await this.pagesRepository.save(page);
 
+    this.logger.log('finished registerPage');
     return ResponseEntity.OK('노션 페이지 저장 완료');
   }
 

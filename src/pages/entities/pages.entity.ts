@@ -11,6 +11,12 @@ export class Page {
   userId: number;
 
   @Column()
+  title: string;
+
+  @Column()
+  customDomain: string;
+
+  @Column()
   pageUrl: string;
 
   @OneToOne(() => OriginalPage, (originalPage) => originalPage.page, { cascade: true, eager: true })

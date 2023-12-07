@@ -7,6 +7,18 @@ export class PagesRequestDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({ description: '페이지 title' })
+  title: string;
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: '페이지 domain' })
+  customDomain: string;
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: '노션 페이지 URL' })
   pageUrl: string;
 }
