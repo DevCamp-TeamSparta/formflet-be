@@ -6,9 +6,11 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/pages.entity';
 import { plainToInstance } from 'class-transformer';
-import { PagesDetailRepository } from '../repositories/pages-detail.repository';
-import { PageDetail } from '../entities/pages-detail.entity';
+import { OriginalPagesRepository } from '../repositories/original-pages.repository';
+import { OriginalPage } from '../entities/original-pages.entity';
+import { EditPagesRepository } from '../repositories/edit-pages.repository';
 import puppeteer from 'puppeteer';
+import { EditPage } from '../entities/edit-pages.entity';
 
 @Injectable()
 export class PagesService {
@@ -16,9 +18,12 @@ export class PagesService {
 
   constructor(
     private readonly pagesRepository: PagesRepository,
-    private readonly pagesDetailRepository: PagesDetailRepository,
+    private readonly originalPagesRepository: OriginalPagesRepository,
+    private readonly editPagesRepository: EditPagesRepository,
   ) {}
+
   async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
+    // notion page scraping
     const content: string = await this.scrapNotionPage(requestDto.pageUrl);
 
     const userId: number = user.id;
@@ -27,27 +32,28 @@ export class PagesService {
     this.logger.log(`userId: ${userId}`);
     this.logger.log(`pageUrl: ${pageUrl}`);
 
-    const page: Page = this.pagesRepository.create({ userId, pageUrl });
+    const originalPage: OriginalPage = await this.registerOriginalPage(content);
+    const editPage: EditPage = await this.registerEditPage(content);
 
-    try {
-      await this.pagesRepository.save(page);
+    const page: Page = this.pagesRepository.create({ userId, pageUrl, originalPage, editPage });
 
-      return this.registerPageDetail(page, content);
-    } catch (e) {
-      throw new InternalServerErrorException('페이지 URL 저장 오류');
-    }
+    await this.pagesRepository.save(page);
+
+    return ResponseEntity.OK('노션 페이지 저장 완료');
   }
 
-  async registerPageDetail(page: Page, content: string): Promise<ResponseEntity<string>> {
-    const pageDetail: PageDetail = this.pagesDetailRepository.create({ page, content });
+  async registerOriginalPage(content: string): Promise<OriginalPage> {
+    this.logger.log('start registerOriginalPage');
 
-    try {
-      await this.pagesDetailRepository.save(pageDetail);
+    const originalPage: OriginalPage = this.originalPagesRepository.create({ content });
+    return await this.originalPagesRepository.save(originalPage);
+  }
 
-      return ResponseEntity.OK('노션 페이지 저장 완료');
-    } catch (e) {
-      throw new InternalServerErrorException('스크래핑 데이터 저장 오류');
-    }
+  async registerEditPage(content: string): Promise<EditPage> {
+    this.logger.log('start registerEditPage');
+
+    const editPage: EditPage = this.editPagesRepository.create({ content });
+    return await this.editPagesRepository.save(editPage);
   }
 
   async getPageByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
@@ -63,7 +69,7 @@ export class PagesService {
   }
 
   async scrapNotionPage(pageUrl: string) {
-    this.logger.log('start scrapping');
+    this.logger.log('start scrapNotionPage');
 
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();

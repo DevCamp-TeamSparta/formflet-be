@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { PageDetail } from './pages-detail.entity';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { OriginalPage } from './original-pages.entity';
+import { EditPage } from './edit-pages.entity';
 
 @Entity()
 export class Page {
@@ -12,6 +13,11 @@ export class Page {
   @Column()
   pageUrl: string;
 
-  @OneToMany(() => PageDetail, (pageDetail) => pageDetail.page, { cascade: true, eager: true })
-  pageDetails: PageDetail[];
+  @OneToOne(() => OriginalPage, (originalPage) => originalPage.page, { cascade: true, eager: true })
+  @JoinColumn()
+  originalPage: OriginalPage;
+
+  @OneToOne(() => EditPage, (editPage) => editPage.page, { cascade: true, eager: true })
+  @JoinColumn()
+  editPage: EditPage;
 }

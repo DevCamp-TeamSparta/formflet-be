@@ -1,8 +1,8 @@
-import { PageDetail } from '../../../entities/pages-detail.entity';
+import { OriginalPage } from '../../../entities/original-pages.entity';
 
 export class PagesResponseDto {
   readonly id: number;
   readonly userId: number;
   readonly pageUrl: string;
-  readonly pageDetails: PageDetail[];
+  readonly pageDetails: OriginalPage[];
 }

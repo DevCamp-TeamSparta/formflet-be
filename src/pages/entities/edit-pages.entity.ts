@@ -1,12 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Page } from './pages.entity';
 
 @Entity()
-export class PageDetail {
+export class EditPage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Page, (page) => page.pageDetails)
+  @OneToOne(() => Page, (page) => page.editPage)
   page: Page;
 
   @Column({ type: 'longtext' })
