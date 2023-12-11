@@ -22,7 +22,7 @@ export class PagesService {
     private readonly editPagesRepository: EditPagesRepository,
   ) {}
 
-  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
+  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start registerPage');
     this.logger.log(`title: ${requestDto.title}`);
     this.logger.log(`customDomain: ${requestDto.customDomain}`);
@@ -43,8 +43,10 @@ export class PagesService {
 
     await this.pagesRepository.save(page);
 
+    const data: PagesResponseDto = PagesResponseDto.builder().setId(page.id).build();
+
     this.logger.log('finished registerPage');
-    return ResponseEntity.OK('노션 페이지 저장 완료');
+    return ResponseEntity.OK_WITH_DATA('노션 페이지 저장 완료', data);
   }
 
   async scrapNotionPage(pageUrl: string) {
@@ -108,9 +110,33 @@ export class PagesService {
     try {
       const pageList: Page[] = await this.pagesRepository.findAllByUserId(user);
 
-      const data: PagesResponseDto[] = plainToInstance(PagesResponseDto, pageList);
+      const data: PagesResponseDto[] = [];
+
+      for (const page of pageList) {
+        const pagesResponseDto = PagesResponseDto.builder()
+          .setId(page.id)
+          .setUserId(page.userId)
+          .setTitle(page.title)
+          .setCustomDomain(page.customDomain)
+          .setPageUrl(page.pageUrl)
+          .build();
+
+        data.push(pagesResponseDto);
+      }
 
       return ResponseEntity.OK_WITH_DATA('전체 노션 페이지 조회 성공', data);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
+    try {
+      const page: Page = await this.pagesRepository.findOneBy({ id });
+
+      const data: PagesResponseDto = plainToInstance(PagesResponseDto, page);
+
+      return ResponseEntity.OK_WITH_DATA('특정 노션 페이지 조회 성공', data);
     } catch (e) {
       throw new InternalServerErrorException();
     }
