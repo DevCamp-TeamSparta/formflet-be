@@ -6,7 +6,7 @@ export class PagesResponseDtoBuilder {
   private title?: string;
   private customDomain?: string;
   private pageUrl?: string;
-  private editPage?: EditPage[];
+  private editPage?: EditPage;
 
   setId(id: number): this {
     this.id = id;
@@ -33,7 +33,7 @@ export class PagesResponseDtoBuilder {
     return this;
   }
 
-  setEditPage(editPage: EditPage[]): this {
+  setEditPage(editPage: EditPage): this {
     this.editPage = editPage;
     return this;
   }
@@ -56,7 +56,7 @@ export class PagesResponseDto {
   readonly title?: string;
   readonly customDomain?: string;
   readonly pageUrl?: string;
-  readonly editPage?: EditPage[];
+  readonly editPage?: EditPage;
 
   constructor(data: {
     id?: number;
@@ -64,7 +64,7 @@ export class PagesResponseDto {
     title?: string;
     customDomain?: string;
     pageUrl?: string;
-    editPage?: EditPage[];
+    editPage?: EditPage;
   }) {
     this.id = data.id;
     this.userId = data.userId;

@@ -10,7 +10,6 @@ import { OriginalPage } from '../entities/original-pages.entity';
 import { EditPagesRepository } from '../repositories/edit-pages.repository';
 import { EditPage } from '../entities/edit-pages.entity';
 import puppeteer from 'puppeteer';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class PagesService {
@@ -134,7 +133,14 @@ export class PagesService {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
 
-      const data: PagesResponseDto = plainToInstance(PagesResponseDto, page);
+      const data = PagesResponseDto.builder()
+        .setId(page.id)
+        .setUserId(page.userId)
+        .setTitle(page.title)
+        .setCustomDomain(page.customDomain)
+        .setPageUrl(page.pageUrl)
+        .setEditPage(page.editPage)
+        .build();
 
       return ResponseEntity.OK_WITH_DATA('특정 노션 페이지 조회 성공', data);
     } catch (e) {
