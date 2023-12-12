@@ -4,21 +4,27 @@ import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dt
 import { PagesRepository } from '../repositories/pages.repository';
 import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
-import { Page } from '../entities/pages.entity';
-import { OriginalPagesRepository } from '../repositories/original-pages.repository';
-import { OriginalPage } from '../entities/original-pages.entity';
-import { EditPagesRepository } from '../repositories/edit-pages.repository';
-import { EditPage } from '../entities/edit-pages.entity';
-import puppeteer from 'puppeteer';
+import { Page } from '../entities/page.entity';
+import { PageBackup } from '../entities/page-backup.entity';
+import { PagesContentRepository } from '../repositories/pages-content.repository';
+import { PageContent } from '../entities/page-content.entity';
+import { PagesBackupRepository } from '../repositories/pages-backup.repository';
+import { Builder } from 'builder-pattern';
+import { FontStyle } from '../entities/font-style.entity';
+import { FontStyleRepository } from '../repositories/font-style.repository';
+import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
+import { PagesSupportService } from './pages-support.service';
 
 @Injectable()
 export class PagesService {
   private readonly logger: Logger = new Logger('PagesService');
 
   constructor(
+    private readonly pagesSupportService: PagesSupportService,
     private readonly pagesRepository: PagesRepository,
-    private readonly originalPagesRepository: OriginalPagesRepository,
-    private readonly editPagesRepository: EditPagesRepository,
+    private readonly pagesBackupRepository: PagesBackupRepository,
+    private readonly pagesContentRepository: PagesContentRepository,
+    private readonly pagesFontRepository: FontStyleRepository,
   ) {}
 
   async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
@@ -27,103 +33,71 @@ export class PagesService {
     this.logger.log(`customDomain: ${requestDto.customDomain}`);
     this.logger.log(`pageUrl: ${requestDto.pageUrl}`);
 
-    // notion page scraping
-    const content: string = await this.scrapNotionPage(requestDto.pageUrl);
+    const content: string = await this.pagesSupportService.scrapNotionPage(requestDto.pageUrl);
 
-    const userId: number = user.id;
-    const { title, customDomain, pageUrl } = requestDto;
-
-    const [originalPage, editPage] = await Promise.all([
-      this.registerOriginalPage(content),
-      this.registerEditPage(content),
+    const [pageBackup, pageContent, fontStyle] = await Promise.all([
+      this.createPageBackup(content),
+      this.createPageContent(content),
+      this.createPageFont(),
     ]);
 
-    const page: Page = this.pagesRepository.create({ userId, title, customDomain, pageUrl, originalPage, editPage });
+    const page: Page = Builder<Page>()
+      .userId(user.id)
+      .title(requestDto.title)
+      .customDomain(requestDto.customDomain)
+      .pageUrl(requestDto.pageUrl)
+      .pageBackup(pageBackup)
+      .pageContent(pageContent)
+      .fontStyle(fontStyle)
+      .build();
 
     await this.pagesRepository.save(page);
 
-    const data: PagesResponseDto = PagesResponseDto.builder().setId(page.id).build();
+    const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
 
-    this.logger.log('finished registerPage');
-    return ResponseEntity.OK_WITH_DATA('노션 페이지 저장 완료', data);
+    return ResponseEntity.OK_WITH_DATA('노션 페이지 저장 완료', pagesResponseDto);
   }
 
-  async scrapNotionPage(pageUrl: string) {
-    this.logger.log('start scrapNotionPage');
+  async createPageBackup(content: string): Promise<PageBackup> {
+    this.logger.log('start createPageOriginal');
 
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
-    const url: string = pageUrl;
-    await page.goto(url, {
-      waitUntil: 'networkidle0',
-    });
-
-    await this.openToggles(page);
-
-    const notionAppHTML: string = await page.evaluate(() => {
-      const element = document.getElementById('notion-app');
-      return element ? element.innerHTML : '';
-    });
-
-    await browser.close();
-    // const domainName: string = new URL(url).hostname;
-
-    // return { props: { notionAppHTML, domainName } };
-    return notionAppHTML;
+    const pageBackup: PageBackup = Builder<PageBackup>().content(content).build();
+    return await this.pagesBackupRepository.save(pageBackup);
   }
 
-  async openToggles(page) {
-    let isClosedToggleExist = true;
+  async updatePageBackup(pageBackup: PageBackup, content: string): Promise<PageBackup> {
+    this.logger.log('start createPageOriginal');
 
-    while (isClosedToggleExist) {
-      // div[aria-label="열기"] 요소들을 찾아 클릭
-      isClosedToggleExist = await page.evaluate(() => {
-        const toggles = Array.from(document.querySelectorAll('div[aria-label="열기"]'));
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error
-        toggles.forEach((toggle) => toggle.click());
-        return toggles.length > 0;
-      });
-
-      if (isClosedToggleExist) {
-        await page.waitForTimeout(1000);
-      }
-    }
+    pageBackup.content = content;
+    return await this.pagesBackupRepository.save(pageBackup);
   }
 
-  async registerOriginalPage(content: string): Promise<OriginalPage> {
-    this.logger.log('start registerOriginalPage');
+  async createPageContent(content: string): Promise<PageContent> {
+    this.logger.log('start createPageContent');
 
-    const originalPage: OriginalPage = this.originalPagesRepository.create({ content });
-    return await this.originalPagesRepository.save(originalPage);
+    const pageContent: PageContent = Builder<PageContent>().content(content).build();
+    return await this.pagesContentRepository.save(pageContent);
   }
 
-  async registerEditPage(content: string): Promise<EditPage> {
-    this.logger.log('start registerEditPage');
+  async updatePageContent(pageContent: PageContent, content: string): Promise<PageBackup> {
+    this.logger.log('start createPageOriginal');
 
-    const editPage: EditPage = this.editPagesRepository.create({ content });
-    return await this.editPagesRepository.save(editPage);
+    pageContent.content = content;
+    return await this.pagesContentRepository.save(pageContent);
   }
 
-  async getAllPageByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+  async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
     try {
       const pageList: Page[] = await this.pagesRepository.findAllByUserId(user);
-
-      const data: PagesResponseDto[] = [];
+      const pagesResponseDtoList: PagesResponseDto[] = [];
 
       for (const page of pageList) {
-        const pagesResponseDto = PagesResponseDto.builder()
-          .setId(page.id)
-          .setUserId(page.userId)
-          .setTitle(page.title)
-          .setCustomDomain(page.customDomain)
-          .setPageUrl(page.pageUrl)
-          .build();
+        const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
 
-        data.push(pagesResponseDto);
+        pagesResponseDtoList.push(pagesResponseDto);
       }
 
-      return ResponseEntity.OK_WITH_DATA('전체 노션 페이지 조회 성공', data);
+      return ResponseEntity.OK_WITH_DATA('전체 노션 페이지 조회 성공', pagesResponseDtoList);
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -132,19 +106,40 @@ export class PagesService {
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
+      const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
 
-      const data = PagesResponseDto.builder()
-        .setId(page.id)
-        .setUserId(page.userId)
-        .setTitle(page.title)
-        .setCustomDomain(page.customDomain)
-        .setPageUrl(page.pageUrl)
-        .setEditPage(page.editPage)
-        .build();
-
-      return ResponseEntity.OK_WITH_DATA('특정 노션 페이지 조회 성공', data);
+      return ResponseEntity.OK_WITH_DATA('특정 노션 페이지 조회 성공', pagesResponseDto);
     } catch (e) {
       throw new InternalServerErrorException();
     }
+  }
+
+  async editPage(id: number, pagesEditRequestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
+    const page: Page = await this.pagesRepository.findOneBy({ id });
+    const fontStyle: FontStyle = await this.pagesFontRepository.findOneBy({ page });
+
+    await this.updatePageFont(fontStyle, pagesEditRequestDto.type);
+    await this.updatePageFontInPage(page, fontStyle);
+
+    const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
+
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집 완료', pagesResponseDto);
+  }
+
+  async updatePageFontInPage(page: Page, fontStyle: FontStyle) {
+    page.fontStyle = fontStyle;
+    await this.pagesRepository.save(page);
+  }
+
+  async createPageFont(): Promise<FontStyle> {
+    const type: string = 'default';
+
+    const fontStyle: FontStyle = Builder<FontStyle>().type(type).build();
+    return await this.pagesFontRepository.save(fontStyle);
+  }
+
+  async updatePageFont(fontStyle: FontStyle, type: string): Promise<FontStyle> {
+    fontStyle.type = type;
+    return await this.pagesFontRepository.save(fontStyle);
   }
 }

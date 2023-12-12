@@ -1,14 +1,18 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Page } from './pages.entity';
+import { Page } from './page.entity';
 
 @Entity()
-export class EditPage {
+export class PageBackup {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Page, (page) => page.editPage)
+  @OneToOne(() => Page, (page) => page.pageBackup)
   page: Page;
 
   @Column({ type: 'longtext' })
   content: string;
+
+  constructor(content: string) {
+    this.content = content;
+  }
 }

@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Page } from '../entities/pages.entity';
+import { Page } from '../entities/page.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities/user.entity';
 
