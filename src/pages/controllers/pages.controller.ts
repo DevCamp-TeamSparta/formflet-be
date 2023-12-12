@@ -55,4 +55,13 @@ export class PagesController {
   ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.editPage(id, pagesEditRequestDto);
   }
+
+  @Patch('/refresh/:id')
+  @ApiOperation({
+    summary: '페이지 새로고침 API',
+    description: '페이지 새로고침 API',
+  })
+  async refreshPage(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.pagesService.refreshPage(id);
+  }
 }

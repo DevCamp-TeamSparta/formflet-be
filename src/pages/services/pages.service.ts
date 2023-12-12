@@ -142,4 +142,24 @@ export class PagesService {
     fontStyle.type = type;
     return await this.pagesFontRepository.save(fontStyle);
   }
+
+  async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
+    const pageBefore: Page = await this.pagesRepository.findOneBy({ id });
+
+    const pageBackup: PageBackup = await this.pagesBackupRepository.findOneBy({ page: pageBefore });
+    const pageContent: PageContent = await this.pagesContentRepository.findOneBy({ page: pageBefore });
+    const fontStyle: FontStyle = await this.pagesFontRepository.findOneBy({ page: pageBefore });
+
+    const content: string = await this.pagesSupportService.scrapNotionPage(pageBefore.pageUrl);
+
+    await this.updatePageBackup(pageBackup, content);
+    await this.updatePageContent(pageContent, content);
+    await this.updatePageFont(fontStyle, 'default');
+
+    const pageAfter: Page = await this.pagesRepository.findOneBy({ id });
+
+    const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(pageAfter);
+
+    return ResponseEntity.OK_WITH_DATA('페이지 새로고침 완료', pagesResponseDto);
+  }
 }
