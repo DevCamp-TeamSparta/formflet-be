@@ -10,20 +10,20 @@ import {
 } from '@nestjs/common';
 import { PagesService } from '../services/pages.service';
 import { PagesRequestDto } from './dto/requests/pages-request.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../auth/decorator/get-user.decorator';
 import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { PagesEditRequestDto } from './dto/requests/pages-edit-request.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/pages')
-@UseGuards(AuthGuard())
 export class PagesController {
   constructor(private readonly pagesService: PagesService) {}
 
-  @Post('/register')
+  @Post('register')
+  @UseGuards(AuthGuard())
   @ApiOperation({
     summary: '노션 페이지 등록 API',
     description: '노션 페이지 등록 API',
@@ -36,9 +36,10 @@ export class PagesController {
   }
 
   @Get()
+  @UseGuards(AuthGuard())
   @ApiOperation({
-    summary: '전체 노션 페이지 조회 API',
-    description: '전체 노션 페이지 조회 API',
+    summary: '전체 페이지 조회 API',
+    description: '전체 페이지 조회 API',
   })
   async getAllPageByUserId(
     @GetUser() user: User,
@@ -47,9 +48,10 @@ export class PagesController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
-    summary: '특정 노션 페이지 조회 API',
-    description: '특정 노션 페이지 조회 API',
+    summary: 'id로 페이지 조회 API',
+    description: 'id로 페이지 조회 API',
   })
   async getPageByPageId(
     @Param('id') id: number,
@@ -57,7 +59,19 @@ export class PagesController {
     return this.pagesService.getPageByPageId(id);
   }
 
-  @Patch('/edit/:id')
+  @Get('search/:domain')
+  @ApiOperation({
+    summary: '도메인으로 페이지 조회 API',
+    description: '도메인으로 페이지 조회 API',
+  })
+  async getPageByDomain(
+    @Param('domain') domain: string,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.pagesService.getPageByDomain(domain);
+  }
+
+  @Patch('edit/:id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
     summary: '페이지 편집 시 적용한 효과 저장 API',
     description: '페이지 편집 시 적용한 효과 저장 API',
@@ -69,7 +83,8 @@ export class PagesController {
     return this.pagesService.editPage(id, pagesEditRequestDto);
   }
 
-  @Patch('/refresh/:id')
+  @Patch('refresh/:id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
     summary: '페이지 새로고침 API',
     description: '페이지 새로고침 API',
@@ -79,6 +94,7 @@ export class PagesController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
     summary: '특정 노션 페이지 삭제 API',
     description: '특정 노션 페이지 삭제 API',
