@@ -7,11 +7,8 @@ import { AuthModule } from '../auth/auth.module';
 import { Page } from './entities/page.entity';
 import { PagesRepository } from './repositories/pages.repository';
 import { PageBackup } from './entities/page-backup.entity';
-import { PagesContentRepository } from './repositories/pages-content.repository';
 import { PageContent } from './entities/page-content.entity';
-import { PagesBackupRepository } from './repositories/pages-backup.repository';
 import { FontStyle } from './entities/font-style.entity';
-import { FontStyleRepository } from './repositories/font-style.repository';
 import { PagesSupportService } from './services/pages-support.service';
 
 @Module({
@@ -21,13 +18,6 @@ import { PagesSupportService } from './services/pages-support.service';
     AuthModule,
   ],
   controllers: [PagesController],
-  providers: [
-    PagesService,
-    PagesSupportService,
-    PagesRepository,
-    PagesBackupRepository,
-    PagesContentRepository,
-    FontStyleRepository,
-  ],
+  providers: [PagesService, PagesSupportService, PagesRepository],
 })
 export class PagesModule {}

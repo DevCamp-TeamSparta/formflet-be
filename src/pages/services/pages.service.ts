@@ -6,12 +6,9 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/page.entity';
 import { PageBackup } from '../entities/page-backup.entity';
-import { PagesContentRepository } from '../repositories/pages-content.repository';
 import { PageContent } from '../entities/page-content.entity';
-import { PagesBackupRepository } from '../repositories/pages-backup.repository';
 import { Builder } from 'builder-pattern';
 import { FontStyle } from '../entities/font-style.entity';
-import { FontStyleRepository } from '../repositories/font-style.repository';
 import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
 import { PagesSupportService } from './pages-support.service';
 
@@ -22,9 +19,6 @@ export class PagesService {
   constructor(
     private readonly pagesSupportService: PagesSupportService,
     private readonly pagesRepository: PagesRepository,
-    private readonly pagesBackupRepository: PagesBackupRepository,
-    private readonly pagesContentRepository: PagesContentRepository,
-    private readonly fontStyleRepository: FontStyleRepository,
   ) {}
 
   async registerPage(

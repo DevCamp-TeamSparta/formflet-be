@@ -74,9 +74,7 @@ export class PagesController {
     summary: '페이지 새로고침 API',
     description: '페이지 새로고침 API',
   })
-  async refreshPage(
-    @Param('id') id: number,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async refreshPage(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.refreshPage(id);
   }
 
@@ -85,9 +83,7 @@ export class PagesController {
     summary: '특정 노션 페이지 삭제 API',
     description: '특정 노션 페이지 삭제 API',
   })
-  async deletePageByPageId(
-    @Param('id') id: number,
-  ): Promise<ResponseEntity<string>> {
+  async deletePageByPageId(@Param('id') id: number): Promise<ResponseEntity<string>> {
     return this.pagesService.deletePage(id);
   }
 }
