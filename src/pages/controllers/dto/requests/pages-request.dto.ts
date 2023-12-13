@@ -14,11 +14,11 @@ export class PagesRequestDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: '페이지 domain' })
-  customDomain: string;
+  domain: string;
 
   @Expose()
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: '노션 페이지 URL' })
-  pageUrl: string;
+  url: string;
 }

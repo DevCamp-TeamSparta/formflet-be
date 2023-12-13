@@ -1,30 +1,30 @@
 import { PageContent } from '../../../entities/page-content.entity';
-import { FontStyle } from '../../../entities/font-style.entity';
+import { PageFont } from '../../../entities/page-font.entity';
 
 export class PagesResponseDto {
   readonly id: number;
   readonly userId: number;
   readonly title: string;
-  readonly customDomain: string;
-  readonly pageUrl: string;
+  readonly domain: string;
+  readonly url: string;
   readonly pageContent: PageContent;
-  readonly fontStyle: FontStyle;
+  readonly pageFont: PageFont;
 
   constructor(
     id: number,
     userId: number,
     title: string,
-    customDomain: string,
-    pageUrl: string,
+    domain: string,
+    url: string,
     pageContent: PageContent,
-    pageFont: FontStyle,
+    pageFont: PageFont,
   ) {
     this.id = id;
     this.userId = userId;
     this.title = title;
-    this.customDomain = customDomain;
-    this.pageUrl = pageUrl;
+    this.domain = domain;
+    this.url = url;
     this.pageContent = pageContent;
-    this.fontStyle = pageFont;
+    this.pageFont = pageFont;
   }
 }

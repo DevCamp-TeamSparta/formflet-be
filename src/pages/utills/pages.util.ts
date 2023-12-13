@@ -1,19 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
 import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 
-@Injectable()
-export class PagesSupportService {
-  private readonly logger: Logger = new Logger('PagesService');
+export class PagesUtil {
+  private readonly logger: Logger = new Logger('PagesUtil');
 
-  async scrapNotionPage(pageUrl: string) {
+  async scrapNotionPage(notionUrl: string) {
     this.logger.log('start scrapNotionPage');
 
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
-    const url: string = pageUrl;
+    const url: string = notionUrl;
     await page.goto(url, {
       waitUntil: 'networkidle0',
     });
@@ -57,10 +56,10 @@ export class PagesSupportService {
       .id(page.id)
       .userId(page.userId)
       .title(page.title)
-      .customDomain(page.customDomain)
-      .pageUrl(page.pageUrl)
+      .domain(`${page.domain}.${process.env.DOMAIN}`)
+      .url(page.url)
       .pageContent(page.pageContent)
-      .fontStyle(page.fontStyle)
+      .pageFont(page.pageFont)
       .build();
   }
 }

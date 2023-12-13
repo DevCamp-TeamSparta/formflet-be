@@ -1,4 +1,9 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { PagesRequestDto } from '../controllers/dto/requests/pages-request.dto';
 import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 import { PagesRepository } from '../repositories/pages.repository';
@@ -8,16 +13,16 @@ import { Page } from '../entities/page.entity';
 import { PageBackup } from '../entities/page-backup.entity';
 import { PageContent } from '../entities/page-content.entity';
 import { Builder } from 'builder-pattern';
-import { FontStyle } from '../entities/font-style.entity';
+import { PageFont } from '../entities/page-font.entity';
 import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
-import { PagesSupportService } from './pages-support.service';
+import { PagesUtil } from '../utills/pages.util';
 
 @Injectable()
 export class PagesService {
   private readonly logger: Logger = new Logger('PagesService');
 
   constructor(
-    private readonly pagesSupportService: PagesSupportService,
+    private readonly pagesUtil: PagesUtil,
     private readonly pagesRepository: PagesRepository,
   ) {}
 
@@ -27,33 +32,32 @@ export class PagesService {
   ): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start registerPage');
     this.logger.log(`title: ${requestDto.title}`);
-    this.logger.log(`customDomain: ${requestDto.customDomain}`);
-    this.logger.log(`pageUrl: ${requestDto.pageUrl}`);
+    this.logger.log(`domain: ${requestDto.domain}`);
+    this.logger.log(`url: ${requestDto.url}`);
 
-    const content: string = await this.pagesSupportService.scrapNotionPage(
-      requestDto.pageUrl,
-    );
+    await this.checkDomain(requestDto.domain);
+
+    const content: string = await this.pagesUtil.scrapNotionPage(requestDto.url);
 
     const pageBackup: PageBackup = Builder<PageBackup>().content(content).build();
     const pageContent: PageContent = Builder<PageContent>().content(content).build();
-    const fontStyle: FontStyle = Builder<FontStyle>().type('default').build();
+    const pageFont: PageFont = Builder<PageFont>().type('default').build();
 
     const page: Page = Builder<Page>()
       .userId(user.id)
       .title(requestDto.title)
-      .customDomain(requestDto.customDomain)
-      .pageUrl(requestDto.pageUrl)
+      .domain(requestDto.domain)
+      .url(requestDto.url)
       .pageBackup(pageBackup)
       .pageContent(pageContent)
-      .fontStyle(fontStyle)
+      .pageFont(pageFont)
       .build();
 
     await this.pagesRepository.save(page);
 
-    const pagesResponseDto: PagesResponseDto =
-      this.pagesSupportService.buildPagesResponseDto(page);
+    const pagesResponseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
 
-    return ResponseEntity.OK_WITH_DATA('노션 페이지 저장 완료', pagesResponseDto);
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 저장 완료', pagesResponseDto);
   }
 
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
@@ -63,7 +67,7 @@ export class PagesService {
 
       for (const page of pageList) {
         const pagesResponseDto: PagesResponseDto =
-          this.pagesSupportService.buildPagesResponseDto(page);
+          this.pagesUtil.buildPagesResponseDto(page);
 
         pagesResponseDtoList.push(pagesResponseDto);
       }
@@ -81,9 +85,21 @@ export class PagesService {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
       const pagesResponseDto: PagesResponseDto =
-        this.pagesSupportService.buildPagesResponseDto(page);
+        this.pagesUtil.buildPagesResponseDto(page);
 
       return ResponseEntity.OK_WITH_DATA('특정 노션 페이지 조회 성공', pagesResponseDto);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getPageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
+    try {
+      const page: Page = await this.pagesRepository.findOneBy({ domain });
+      const pagesResponseDto: PagesResponseDto =
+        this.pagesUtil.buildPagesResponseDto(page);
+
+      return ResponseEntity.OK_WITH_DATA('조회 성공', pagesResponseDto);
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -95,12 +111,11 @@ export class PagesService {
   ): Promise<ResponseEntity<PagesResponseDto>> {
     const page: Page = await this.pagesRepository.findOneBy({ id });
 
-    page.fontStyle.type = pagesEditRequestDto.type;
+    page.pageFont.type = pagesEditRequestDto.type;
 
     await this.pagesRepository.save(page);
 
-    const pagesResponseDto: PagesResponseDto =
-      this.pagesSupportService.buildPagesResponseDto(page);
+    const pagesResponseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집 완료', pagesResponseDto);
   }
@@ -108,16 +123,15 @@ export class PagesService {
   async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     const page: Page = await this.pagesRepository.findOneBy({ id });
 
-    const content: string = await this.pagesSupportService.scrapNotionPage(page.pageUrl);
+    const content: string = await this.pagesUtil.scrapNotionPage(page.url);
 
     page.pageBackup.content = content;
     page.pageContent.content = content;
-    page.fontStyle.type = 'default';
+    page.pageFont.type = 'default';
 
     await this.pagesRepository.save(page);
 
-    const pagesResponseDto: PagesResponseDto =
-      this.pagesSupportService.buildPagesResponseDto(page);
+    const pagesResponseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('페이지 새로고침 완료', pagesResponseDto);
   }
@@ -126,5 +140,13 @@ export class PagesService {
     await this.pagesRepository.delete({ id });
 
     return ResponseEntity.OK('페이지 삭제 완료');
+  }
+
+  async checkDomain(domain: string): Promise<void> {
+    const page: Page = await this.pagesRepository.findByDomain(domain);
+
+    if (page) {
+      throw new ConflictException('이미 존재하는 도메인 입니다.');
+    }
   }
 }
