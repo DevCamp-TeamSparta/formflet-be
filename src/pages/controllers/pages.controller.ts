@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { PagesService } from '../services/pages.service';
 import { PagesRequestDto } from './dto/requests/pages-request.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -31,7 +40,9 @@ export class PagesController {
     summary: '전체 노션 페이지 조회 API',
     description: '전체 노션 페이지 조회 API',
   })
-  async getAllPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+  async getAllPageByUserId(
+    @GetUser() user: User,
+  ): Promise<ResponseEntity<PagesResponseDto[]>> {
     return this.pagesService.getAllPagesByUserId(user);
   }
 
@@ -40,7 +51,9 @@ export class PagesController {
     summary: '특정 노션 페이지 조회 API',
     description: '특정 노션 페이지 조회 API',
   })
-  async getPageByPageId(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
+  async getPageByPageId(
+    @Param('id') id: number,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.getPageByPageId(id);
   }
 
@@ -61,7 +74,20 @@ export class PagesController {
     summary: '페이지 새로고침 API',
     description: '페이지 새로고침 API',
   })
-  async refreshPage(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
+  async refreshPage(
+    @Param('id') id: number,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.refreshPage(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({
+    summary: '특정 노션 페이지 삭제 API',
+    description: '특정 노션 페이지 삭제 API',
+  })
+  async deletePageByPageId(
+    @Param('id') id: number,
+  ): Promise<ResponseEntity<string>> {
+    return this.pagesService.deletePage(id);
   }
 }

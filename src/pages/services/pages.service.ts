@@ -24,22 +24,25 @@ export class PagesService {
     private readonly pagesRepository: PagesRepository,
     private readonly pagesBackupRepository: PagesBackupRepository,
     private readonly pagesContentRepository: PagesContentRepository,
-    private readonly pagesFontRepository: FontStyleRepository,
+    private readonly fontStyleRepository: FontStyleRepository,
   ) {}
 
-  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
+  async registerPage(
+    user: User,
+    requestDto: PagesRequestDto,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start registerPage');
     this.logger.log(`title: ${requestDto.title}`);
     this.logger.log(`customDomain: ${requestDto.customDomain}`);
     this.logger.log(`pageUrl: ${requestDto.pageUrl}`);
 
-    const content: string = await this.pagesSupportService.scrapNotionPage(requestDto.pageUrl);
+    const content: string = await this.pagesSupportService.scrapNotionPage(
+      requestDto.pageUrl,
+    );
 
-    const [pageBackup, pageContent, fontStyle] = await Promise.all([
-      this.createPageBackup(content),
-      this.createPageContent(content),
-      this.createPageFont(),
-    ]);
+    const pageBackup: PageBackup = Builder<PageBackup>().content(content).build();
+    const pageContent: PageContent = Builder<PageContent>().content(content).build();
+    const fontStyle: FontStyle = Builder<FontStyle>().type('default').build();
 
     const page: Page = Builder<Page>()
       .userId(user.id)
@@ -53,37 +56,10 @@ export class PagesService {
 
     await this.pagesRepository.save(page);
 
-    const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
+    const pagesResponseDto: PagesResponseDto =
+      this.pagesSupportService.buildPagesResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('노션 페이지 저장 완료', pagesResponseDto);
-  }
-
-  async createPageBackup(content: string): Promise<PageBackup> {
-    this.logger.log('start createPageOriginal');
-
-    const pageBackup: PageBackup = Builder<PageBackup>().content(content).build();
-    return await this.pagesBackupRepository.save(pageBackup);
-  }
-
-  async updatePageBackup(pageBackup: PageBackup, content: string): Promise<PageBackup> {
-    this.logger.log('start createPageOriginal');
-
-    pageBackup.content = content;
-    return await this.pagesBackupRepository.save(pageBackup);
-  }
-
-  async createPageContent(content: string): Promise<PageContent> {
-    this.logger.log('start createPageContent');
-
-    const pageContent: PageContent = Builder<PageContent>().content(content).build();
-    return await this.pagesContentRepository.save(pageContent);
-  }
-
-  async updatePageContent(pageContent: PageContent, content: string): Promise<PageBackup> {
-    this.logger.log('start createPageOriginal');
-
-    pageContent.content = content;
-    return await this.pagesContentRepository.save(pageContent);
   }
 
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
@@ -92,12 +68,16 @@ export class PagesService {
       const pagesResponseDtoList: PagesResponseDto[] = [];
 
       for (const page of pageList) {
-        const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
+        const pagesResponseDto: PagesResponseDto =
+          this.pagesSupportService.buildPagesResponseDto(page);
 
         pagesResponseDtoList.push(pagesResponseDto);
       }
 
-      return ResponseEntity.OK_WITH_DATA('전체 노션 페이지 조회 성공', pagesResponseDtoList);
+      return ResponseEntity.OK_WITH_DATA(
+        '전체 노션 페이지 조회 성공',
+        pagesResponseDtoList,
+      );
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -106,7 +86,8 @@ export class PagesService {
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
-      const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
+      const pagesResponseDto: PagesResponseDto =
+        this.pagesSupportService.buildPagesResponseDto(page);
 
       return ResponseEntity.OK_WITH_DATA('특정 노션 페이지 조회 성공', pagesResponseDto);
     } catch (e) {
@@ -114,52 +95,42 @@ export class PagesService {
     }
   }
 
-  async editPage(id: number, pagesEditRequestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
+  async editPage(
+    id: number,
+    pagesEditRequestDto: PagesEditRequestDto,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
     const page: Page = await this.pagesRepository.findOneBy({ id });
-    const fontStyle: FontStyle = await this.pagesFontRepository.findOneBy({ page });
 
-    await this.updatePageFont(fontStyle, pagesEditRequestDto.type);
-    await this.updatePageFontInPage(page, fontStyle);
+    page.fontStyle.type = pagesEditRequestDto.type;
 
-    const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(page);
+    await this.pagesRepository.save(page);
+
+    const pagesResponseDto: PagesResponseDto =
+      this.pagesSupportService.buildPagesResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집 완료', pagesResponseDto);
   }
 
-  async updatePageFontInPage(page: Page, fontStyle: FontStyle) {
-    page.fontStyle = fontStyle;
-    await this.pagesRepository.save(page);
-  }
-
-  async createPageFont(): Promise<FontStyle> {
-    const type: string = 'default';
-
-    const fontStyle: FontStyle = Builder<FontStyle>().type(type).build();
-    return await this.pagesFontRepository.save(fontStyle);
-  }
-
-  async updatePageFont(fontStyle: FontStyle, type: string): Promise<FontStyle> {
-    fontStyle.type = type;
-    return await this.pagesFontRepository.save(fontStyle);
-  }
-
   async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    const pageBefore: Page = await this.pagesRepository.findOneBy({ id });
+    const page: Page = await this.pagesRepository.findOneBy({ id });
 
-    const pageBackup: PageBackup = await this.pagesBackupRepository.findOneBy({ page: pageBefore });
-    const pageContent: PageContent = await this.pagesContentRepository.findOneBy({ page: pageBefore });
-    const fontStyle: FontStyle = await this.pagesFontRepository.findOneBy({ page: pageBefore });
+    const content: string = await this.pagesSupportService.scrapNotionPage(page.pageUrl);
 
-    const content: string = await this.pagesSupportService.scrapNotionPage(pageBefore.pageUrl);
+    page.pageBackup.content = content;
+    page.pageContent.content = content;
+    page.fontStyle.type = 'default';
 
-    await this.updatePageBackup(pageBackup, content);
-    await this.updatePageContent(pageContent, content);
-    await this.updatePageFont(fontStyle, 'default');
+    await this.pagesRepository.save(page);
 
-    const pageAfter: Page = await this.pagesRepository.findOneBy({ id });
-
-    const pagesResponseDto: PagesResponseDto = this.pagesSupportService.buildPagesResponseDto(pageAfter);
+    const pagesResponseDto: PagesResponseDto =
+      this.pagesSupportService.buildPagesResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('페이지 새로고침 완료', pagesResponseDto);
+  }
+
+  async deletePage(id: number): Promise<ResponseEntity<string>> {
+    await this.pagesRepository.delete({ id });
+
+    return ResponseEntity.OK('페이지 삭제 완료');
   }
 }

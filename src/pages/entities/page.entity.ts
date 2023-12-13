@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { PageBackup } from './page-backup.entity';
 import { PageContent } from './page-content.entity';
 import { FontStyle } from './font-style.entity';
@@ -20,17 +27,29 @@ export class Page {
   @Column()
   pageUrl: string;
 
-  @OneToOne(() => PageBackup, (originalPage) => originalPage.page, { cascade: true })
-  @JoinColumn()
+  @OneToOne(() => PageBackup, (pageBackup) => pageBackup.page, {
+    cascade: true,
+    eager: true,
+  })
   pageBackup: PageBackup;
 
-  @OneToOne(() => PageContent, (pageContent) => pageContent.page, { cascade: true, eager: true })
-  @JoinColumn()
+  @OneToOne(() => PageContent, (pageContent) => pageContent.page, {
+    cascade: true,
+    eager: true,
+  })
   pageContent: PageContent;
 
-  @OneToOne(() => FontStyle, (fontStyle) => fontStyle.page, { cascade: true, eager: true })
-  @JoinColumn()
+  @OneToOne(() => FontStyle, (fontStyle) => fontStyle.page, {
+    cascade: true,
+    eager: true,
+  })
   fontStyle: FontStyle;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   constructor(
     userId: number,
