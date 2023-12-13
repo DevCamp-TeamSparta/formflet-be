@@ -8,16 +8,16 @@ import { Page } from './entities/page.entity';
 import { PagesRepository } from './repositories/pages.repository';
 import { PageBackup } from './entities/page-backup.entity';
 import { PageContent } from './entities/page-content.entity';
-import { FontStyle } from './entities/font-style.entity';
-import { PagesSupportService } from './services/pages-support.service';
+import { PageFont } from './entities/page-font.entity';
+import { PagesUtil } from './utills/pages.util';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Page, PageBackup, PageContent, FontStyle]),
+    TypeOrmModule.forFeature([Page, PageBackup, PageContent, PageFont]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
   ],
   controllers: [PagesController],
-  providers: [PagesService, PagesSupportService, PagesRepository],
+  providers: [PagesService, PagesUtil, PagesRepository],
 })
 export class PagesModule {}
