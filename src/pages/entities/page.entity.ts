@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { PageBackup } from './page-backup.entity';
 import { PageContent } from './page-content.entity';
-import { FontStyle } from './font-style.entity';
+import { PageFont } from './page-font.entity';
 
 @Entity()
 export class Page {
@@ -22,10 +22,10 @@ export class Page {
   title: string;
 
   @Column()
-  customDomain: string;
+  domain: string;
 
   @Column()
-  pageUrl: string;
+  url: string;
 
   @OneToOne(() => PageBackup, (pageBackup) => pageBackup.page, {
     cascade: true,
@@ -39,11 +39,11 @@ export class Page {
   })
   pageContent: PageContent;
 
-  @OneToOne(() => FontStyle, (fontStyle) => fontStyle.page, {
+  @OneToOne(() => PageFont, (pageFont) => pageFont.page, {
     cascade: true,
     eager: true,
   })
-  fontStyle: FontStyle;
+  pageFont: PageFont;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -54,18 +54,18 @@ export class Page {
   constructor(
     userId: number,
     title: string,
-    customDomain: string,
-    pageUrl: string,
+    domain: string,
+    url: string,
     pageBackup: PageBackup,
     pageContent: PageContent,
-    fontStyle: FontStyle,
+    pageFont: PageFont,
   ) {
     this.userId = userId;
     this.title = title;
-    this.customDomain = customDomain;
-    this.pageUrl = pageUrl;
+    this.domain = domain;
+    this.url = url;
     this.pageBackup = pageBackup;
     this.pageContent = pageContent;
-    this.fontStyle = fontStyle;
+    this.pageFont = pageFont;
   }
 }

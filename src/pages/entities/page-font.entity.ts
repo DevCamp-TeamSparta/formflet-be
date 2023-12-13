@@ -10,11 +10,11 @@ import {
 import { Page } from './page.entity';
 
 @Entity()
-export class FontStyle {
+export class PageFont {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Page, (page) => page.fontStyle, { onDelete: 'CASCADE' })
+  @OneToOne(() => Page, (page) => page.pageFont, { onDelete: 'CASCADE' })
   @JoinColumn()
   page: Page;
 
