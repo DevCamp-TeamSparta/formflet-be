@@ -16,7 +16,7 @@ export class UsersController {
     return this.usersService.joinUser(createUserDto);
   }
 
-  @Get('/check-email/:email')
+  @Get('/check-email')
   @ApiOperation({
     summary: '이메일 중복체크 API',
     description: '이메일 중복체크 API',
