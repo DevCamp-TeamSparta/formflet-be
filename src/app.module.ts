@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PagesModule } from './pages/pages.module';
 import { typeOrmConfig } from './configs/type-orm.config';
+import { FormsModule } from './forms/forms.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { typeOrmConfig } from './configs/type-orm.config';
     UsersModule,
     AuthModule,
     PagesModule,
+    FormsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

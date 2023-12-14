@@ -13,10 +13,7 @@ export class PagesContentService {
   async createPageContent(page: Page, content: string): Promise<PageContent> {
     this.logger.log('start createPageContent');
 
-    const pageContent: PageContent = Builder<PageContent>()
-      .page(page)
-      .content(content)
-      .build();
+    const pageContent: PageContent = Builder<PageContent>().page(page).content(content).build();
     await this.repository.save(pageContent);
 
     return pageContent;

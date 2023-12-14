@@ -12,11 +12,14 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
-import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
+import { EditRequestDto } from '../controllers/dto/requests/edit-request.dto';
 import { PagesUtil } from '../utills/pages.util';
 import { PagesBackupService } from './pages-backup.service';
 import { PagesContentService } from './pages-content.service';
 import { PagesFontService } from './pages-font.service';
+import { FormsService } from '../../forms/services/forms.service';
+import { FormsDetailService } from '../../forms/services/forms-detail.service';
+import { FormsResponseService } from '../../forms/services/forms-response.service';
 
 @Injectable()
 export class PagesService {
@@ -28,33 +31,36 @@ export class PagesService {
     private readonly pagesBackupService: PagesBackupService,
     private readonly pagesContentService: PagesContentService,
     private readonly pagesFontService: PagesFontService,
+    private readonly formsService: FormsService,
+    private readonly formsDetailService: FormsDetailService,
+    private readonly formsResponseService: FormsResponseService,
   ) {}
 
   async registerPage(
     user: User,
-    pagesRequestDto: PagesRequestDto,
+    requestDto: PagesRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start registerPage');
-    this.logger.log(`title: ${pagesRequestDto.title}`);
-    this.logger.log(`domain: ${pagesRequestDto.domain}`);
-    this.logger.log(`url: ${pagesRequestDto.url}`);
+    this.logger.log(`title: ${requestDto.title}`);
+    this.logger.log(`domain: ${requestDto.domain}`);
+    this.logger.log(`url: ${requestDto.url}`);
 
     // domain 중복 검사
-    await this.checkDomain(pagesRequestDto.domain);
+    await this.checkDomain(requestDto.domain);
 
     // page 생성
     const page: Page = Builder<Page>()
       .user(user)
-      .title(pagesRequestDto.title)
-      .domain(pagesRequestDto.domain)
-      .url(pagesRequestDto.url)
+      .title(requestDto.title)
+      .domain(requestDto.domain)
+      .url(requestDto.url)
       .build();
 
     // page 저장
     await this.pagesRepository.save(page);
 
     // scrapping 시작
-    const content: string = await this.pagesUtil.scrapNotionPage(pagesRequestDto.url);
+    const content: string = await this.pagesUtil.scrapNotionPage(requestDto.url);
 
     // scrapping data 생성
     await this.pagesContentService.createPageContent(page, content);
@@ -110,17 +116,18 @@ export class PagesService {
 
   async editPage(
     id: number,
-    pagesEditRequestDto: PagesEditRequestDto,
+    requestDto: EditRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
     const page: Page = await this.pagesRepository.findOneBy({ id });
 
-    page.pageFont.type = pagesEditRequestDto.type;
+    page.pageFont.type = requestDto.type;
 
     await this.pagesRepository.save(page);
+    await this.formsService.createForm(page, requestDto);
 
     const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
 
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집 완료', responseDto);
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
 
   async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
@@ -136,7 +143,7 @@ export class PagesService {
 
     const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
 
-    return ResponseEntity.OK_WITH_DATA('페이지 새로고침 완료', responseDto);
+    return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);
   }
 
   async deletePage(id: number): Promise<ResponseEntity<string>> {

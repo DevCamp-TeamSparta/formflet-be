@@ -50,7 +50,7 @@ export class PagesUtil {
     }
   }
 
-  buildPagesResponseDto(page: Page) {
+  buildPagesResponseDto(page: Page): PagesResponseDto {
     return Builder<PagesResponseDto>()
       .id(page.id)
       .title(page.title)
@@ -58,6 +58,7 @@ export class PagesUtil {
       .url(page.url)
       .pageContent(page.pageContent)
       .pageFont(page.pageFont)
+      .form(page.form)
       .build();
   }
 }

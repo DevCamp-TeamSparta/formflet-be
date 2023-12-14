@@ -13,10 +13,7 @@ export class PagesBackupService {
   async createPageBackup(page: Page, content: string): Promise<PageBackup> {
     this.logger.log('start createPageBackup');
 
-    const pageBackup: PageBackup = Builder<PageBackup>()
-      .page(page)
-      .content(content)
-      .build();
+    const pageBackup: PageBackup = Builder<PageBackup>().page(page).content(content).build();
     await this.repository.save(pageBackup);
 
     return pageBackup;

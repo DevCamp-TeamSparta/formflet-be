@@ -6,7 +6,7 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { PagesEditRequestDto } from './dto/requests/pages-edit-request.dto';
+import { EditRequestDto } from './dto/requests/edit-request.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/pages')
@@ -65,7 +65,7 @@ export class PagesController {
   })
   async editPage(
     @Param('id') id: number,
-    @Body() pagesEditRequestDto: PagesEditRequestDto,
+    @Body() pagesEditRequestDto: EditRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.editPage(id, pagesEditRequestDto);
   }

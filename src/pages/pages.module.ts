@@ -16,12 +16,14 @@ import { PagesFontService } from './services/pages-font.service';
 import { PagesFontRepository } from './repositories/pages-font.repository';
 import { PagesContentService } from './services/pages-content.service';
 import { PagesContentRepository } from './repositories/pages-content.repository';
+import { FormsModule } from '../forms/forms.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Page, PageBackup, PageContent, PageFont]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
+    FormsModule,
   ],
   controllers: [PagesController],
   providers: [
