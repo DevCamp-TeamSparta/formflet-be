@@ -2,10 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 import { PageBackup } from './page-backup.entity';
 import { PageContent } from './page-content.entity';
 import { PageFont } from './page-font.entity';
@@ -15,8 +18,11 @@ export class Page {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: number;
+  @ManyToOne(() => User, (user) => user.page, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  user: User;
 
   @Column()
   title: string;
@@ -52,7 +58,7 @@ export class Page {
   updatedAt: Date;
 
   constructor(
-    userId: number,
+    user: User,
     title: string,
     domain: string,
     url: string,
@@ -60,7 +66,7 @@ export class Page {
     pageContent: PageContent,
     pageFont: PageFont,
   ) {
-    this.userId = userId;
+    this.user = user;
     this.title = title;
     this.domain = domain;
     this.url = url;

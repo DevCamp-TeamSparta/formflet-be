@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Page } from '../../pages/entities/page.entity';
 
 @Entity()
 @Unique(['email'])
@@ -20,6 +29,12 @@ export class User {
 
   @Column()
   job: string;
+
+  @OneToMany(() => Page, (page) => page.user, {
+    cascade: true,
+    eager: true,
+  })
+  page: Page;
 
   @CreateDateColumn()
   createdAt: Date;

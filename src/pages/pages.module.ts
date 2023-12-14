@@ -10,6 +10,12 @@ import { PageBackup } from './entities/page-backup.entity';
 import { PageContent } from './entities/page-content.entity';
 import { PageFont } from './entities/page-font.entity';
 import { PagesUtil } from './utills/pages.util';
+import { PagesBackupService } from './services/pages-backup.service';
+import { PagesBackupRepository } from './repositories/pages-backup.repository';
+import { PagesFontService } from './services/pages-font.service';
+import { PagesFontRepository } from './repositories/pages-font.repository';
+import { PagesContentService } from './services/pages-content.service';
+import { PagesContentRepository } from './repositories/pages-content.repository';
 
 @Module({
   imports: [
@@ -18,6 +24,16 @@ import { PagesUtil } from './utills/pages.util';
     AuthModule,
   ],
   controllers: [PagesController],
-  providers: [PagesService, PagesUtil, PagesRepository],
+  providers: [
+    PagesService,
+    PagesRepository,
+    PagesBackupService,
+    PagesBackupRepository,
+    PagesContentService,
+    PagesContentRepository,
+    PagesFontService,
+    PagesFontRepository,
+    PagesUtil,
+  ],
 })
 export class PagesModule {}

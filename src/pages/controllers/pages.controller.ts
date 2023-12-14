@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { PagesService } from '../services/pages.service';
 import { PagesRequestDto } from './dto/requests/pages-request.dto';
 import { GetUser } from '../../auth/decorator/get-user.decorator';
@@ -35,15 +26,24 @@ export class PagesController {
     return this.pagesService.registerPage(user, pagesRequestDto);
   }
 
+  @Get('release/:domain')
+  @ApiOperation({
+    summary: '배포 페이지 조회 API',
+    description: '배포 페이지 조회 API',
+  })
+  async getReleasePageByDomain(
+    @Param('domain') domain: string,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.pagesService.getReleasePageByDomain(domain);
+  }
+
   @Get()
   @UseGuards(AuthGuard())
   @ApiOperation({
     summary: '전체 페이지 조회 API',
     description: '전체 페이지 조회 API',
   })
-  async getAllPageByUserId(
-    @GetUser() user: User,
-  ): Promise<ResponseEntity<PagesResponseDto[]>> {
+  async getAllPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
     return this.pagesService.getAllPagesByUserId(user);
   }
 
@@ -53,21 +53,8 @@ export class PagesController {
     summary: 'id로 페이지 조회 API',
     description: 'id로 페이지 조회 API',
   })
-  async getPageByPageId(
-    @Param('id') id: number,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async getPageByPageId(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
     return this.pagesService.getPageByPageId(id);
-  }
-
-  @Get('search/:domain')
-  @ApiOperation({
-    summary: '도메인으로 페이지 조회 API',
-    description: '도메인으로 페이지 조회 API',
-  })
-  async getPageByDomain(
-    @Param('domain') domain: string,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.getPageByDomain(domain);
   }
 
   @Patch('edit/:id')

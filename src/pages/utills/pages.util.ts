@@ -12,8 +12,7 @@ export class PagesUtil {
 
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
-    const url: string = notionUrl;
-    await page.goto(url, {
+    await page.goto(notionUrl, {
       waitUntil: 'networkidle0',
     });
 
@@ -54,7 +53,6 @@ export class PagesUtil {
   buildPagesResponseDto(page: Page) {
     return Builder<PagesResponseDto>()
       .id(page.id)
-      .userId(page.userId)
       .title(page.title)
       .domain(`${page.domain}.${process.env.DOMAIN}`)
       .url(page.url)
