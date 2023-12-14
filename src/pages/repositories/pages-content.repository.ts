@@ -1,11 +1,11 @@
 import { Repository } from 'typeorm';
-import { PageContent } from '../entities/page-content.entity';
+import { PageDetail } from '../entities/page-detail.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
-export class PagesContentRepository extends Repository<PageContent> {
+export class PagesContentRepository extends Repository<PageDetail> {
   constructor(
-    @InjectRepository(PageContent)
-    private readonly repository: Repository<PageContent>,
+    @InjectRepository(PageDetail)
+    private readonly repository: Repository<PageDetail>,
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }

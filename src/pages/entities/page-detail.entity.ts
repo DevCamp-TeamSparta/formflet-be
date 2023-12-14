@@ -10,7 +10,7 @@ import {
 import { Page } from './page.entity';
 
 @Entity()
-export class PageContent {
+export class PageDetail {
   @PrimaryGeneratedColumn()
   id: number;
 

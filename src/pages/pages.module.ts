@@ -7,7 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { Page } from './entities/page.entity';
 import { PagesRepository } from './repositories/pages.repository';
 import { PageBackup } from './entities/page-backup.entity';
-import { PageContent } from './entities/page-content.entity';
+import { PageDetail } from './entities/page-detail.entity';
 import { PageFont } from './entities/page-font.entity';
 import { PagesUtil } from './utills/pages.util';
 import { PagesBackupService } from './services/pages-backup.service';
@@ -20,7 +20,7 @@ import { FormsModule } from '../forms/forms.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Page, PageBackup, PageContent, PageFont]),
+    TypeOrmModule.forFeature([Page, PageBackup, PageDetail, PageFont]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
     FormsModule,

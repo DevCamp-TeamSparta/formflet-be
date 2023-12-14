@@ -17,6 +17,9 @@ export class FormDetail {
   @Column()
   type: string;
 
+  @Column({ nullable: false })
+  content: string;
+
   @OneToMany(() => FormResponse, (formResponse) => formResponse.form, {
     cascade: true,
     eager: true,

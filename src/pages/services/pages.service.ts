@@ -12,7 +12,7 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
-import { EditRequestDto } from '../controllers/dto/requests/edit-request.dto';
+import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
 import { PagesUtil } from '../utills/pages.util';
 import { PagesBackupService } from './pages-backup.service';
 import { PagesContentService } from './pages-content.service';
@@ -20,6 +20,7 @@ import { PagesFontService } from './pages-font.service';
 import { FormsService } from '../../forms/services/forms.service';
 import { FormsDetailService } from '../../forms/services/forms-detail.service';
 import { FormsResponseService } from '../../forms/services/forms-response.service';
+import { Form } from '../../forms/entities/forms.entity';
 
 @Injectable()
 export class PagesService {
@@ -116,16 +117,19 @@ export class PagesService {
 
   async editPage(
     id: number,
-    requestDto: EditRequestDto,
+    requestDto: PagesEditRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
-    const page: Page = await this.pagesRepository.findOneBy({ id });
+    this.logger.log('start editPage');
 
-    page.pageFont.type = requestDto.type;
+    const targetPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    await this.pagesRepository.save(page);
-    await this.formsService.createForm(page, requestDto);
+    await this.pagesFontService.updatePageFont(targetPage, requestDto.font.type);
+    const form: Form = await this.formsService.createForm(targetPage, requestDto.form);
+    await this.formsDetailService.createFormDetail(form, requestDto.formDetail);
 
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+    const responsePage: Page = await this.pagesRepository.findOneBy({ id });
+
+    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(responsePage);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }

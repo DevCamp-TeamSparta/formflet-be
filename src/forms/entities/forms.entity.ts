@@ -20,16 +20,20 @@ export class Form {
   @Column()
   description: string;
 
+  @Column()
+  guide: string;
+
   @OneToMany(() => FormDetail, (formDetail) => formDetail.form, {
     cascade: true,
     eager: true,
   })
   formDetail: FormDetail[];
 
-  constructor(page: Page, status: boolean, title: string, description: string) {
+  constructor(page: Page, status: boolean, title: string, description: string, guide: string) {
     this.page = page;
     this.status = status;
     this.title = title;
     this.description = description;
+    this.guide = guide;
   }
 }

@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { PageBackup } from './page-backup.entity';
-import { PageContent } from './page-content.entity';
+import { PageDetail } from './page-detail.entity';
 import { PageFont } from './page-font.entity';
 import { Form } from '../../forms/entities/forms.entity';
 
@@ -40,11 +40,11 @@ export class Page {
   })
   pageBackup: PageBackup;
 
-  @OneToOne(() => PageContent, (pageContent) => pageContent.page, {
+  @OneToOne(() => PageDetail, (pageContent) => pageContent.page, {
     cascade: true,
     eager: true,
   })
-  pageContent: PageContent;
+  pageContent: PageDetail;
 
   @OneToOne(() => PageFont, (pageFont) => pageFont.page, {
     cascade: true,
@@ -70,7 +70,7 @@ export class Page {
     domain: string,
     url: string,
     pageBackup: PageBackup,
-    pageContent: PageContent,
+    pageContent: PageDetail,
     pageFont: PageFont,
   ) {
     this.user = user;

@@ -1,4 +1,4 @@
-import { PageContent } from '../../../entities/page-content.entity';
+import { PageDetail } from '../../../entities/page-detail.entity';
 import { PageFont } from '../../../entities/page-font.entity';
 import { Form } from '../../../../forms/entities/forms.entity';
 
@@ -7,7 +7,7 @@ export class PagesResponseDto {
   readonly title: string;
   readonly domain: string;
   readonly url: string;
-  readonly pageContent: PageContent;
+  readonly pageContent: PageDetail;
   readonly pageFont: PageFont;
   readonly form: Form;
 
@@ -16,7 +16,7 @@ export class PagesResponseDto {
     title: string,
     domain: string,
     url: string,
-    pageContent: PageContent,
+    pageContent: PageDetail,
     pageFont: PageFont,
     form: Form,
   ) {

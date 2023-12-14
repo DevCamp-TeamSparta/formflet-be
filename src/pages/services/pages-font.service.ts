@@ -20,9 +20,9 @@ export class PagesFontService {
   }
 
   async updatePageFont(page: Page, type: string): Promise<PageFont> {
-    this.logger.log('start createPageFont');
+    this.logger.log('start updatePageFont');
 
-    const pageFont: PageFont = await this.repository.findOneBy({ page });
+    const pageFont: PageFont = await this.repository.findOneBy({ page: { id: page.id } });
     pageFont.type = type;
 
     await this.repository.save(pageFont);

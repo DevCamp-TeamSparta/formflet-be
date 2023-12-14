@@ -6,7 +6,7 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { EditRequestDto } from './dto/requests/edit-request.dto';
+import { PagesEditRequestDto } from './dto/requests/pages-edit-request.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/pages')
@@ -21,9 +21,9 @@ export class PagesController {
   })
   async registerPage(
     @GetUser() user: User,
-    @Body() pagesRequestDto: PagesRequestDto,
+    @Body() requestDto: PagesRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.registerPage(user, pagesRequestDto);
+    return this.pagesService.registerPage(user, requestDto);
   }
 
   @Get('release/:domain')
@@ -65,9 +65,10 @@ export class PagesController {
   })
   async editPage(
     @Param('id') id: number,
-    @Body() pagesEditRequestDto: EditRequestDto,
+    @Body() requestDto: PagesEditRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.editPage(id, pagesEditRequestDto);
+    console.log(`font : ${requestDto}`);
+    return this.pagesService.editPage(id, requestDto);
   }
 
   @Patch('refresh/:id')
