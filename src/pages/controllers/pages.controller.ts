@@ -11,9 +11,9 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/pages')
 export class PagesController {
-  constructor(private readonly pagesService: PagesService) {}
+  constructor(private readonly service: PagesService) {}
 
-  @Post('register')
+  @Post('/register')
   @UseGuards(AuthGuard())
   @ApiOperation({
     summary: '노션 페이지 등록 API',
@@ -23,7 +23,7 @@ export class PagesController {
     @GetUser() user: User,
     @Body() requestDto: PagesRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.registerPage(user, requestDto);
+    return this.service.registerPage(user, requestDto);
   }
 
   @Get('release/:domain')
@@ -34,7 +34,7 @@ export class PagesController {
   async getReleasePageByDomain(
     @Param('domain') domain: string,
   ): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.getReleasePageByDomain(domain);
+    return this.service.getReleasePageByDomain(domain);
   }
 
   @Get()
@@ -44,7 +44,7 @@ export class PagesController {
     description: '전체 페이지 조회 API',
   })
   async getAllPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
-    return this.pagesService.getAllPagesByUserId(user);
+    return this.service.getAllPagesByUserId(user);
   }
 
   @Get(':id')
@@ -54,7 +54,7 @@ export class PagesController {
     description: 'id로 페이지 조회 API',
   })
   async getPageByPageId(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.getPageByPageId(id);
+    return this.service.getPageByPageId(id);
   }
 
   @Patch('edit/:id')
@@ -68,7 +68,7 @@ export class PagesController {
     @Body() requestDto: PagesEditRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
     console.log(`font : ${requestDto}`);
-    return this.pagesService.editPage(id, requestDto);
+    return this.service.editPage(id, requestDto);
   }
 
   @Patch('refresh/:id')
@@ -78,7 +78,7 @@ export class PagesController {
     description: '페이지 새로고침 API',
   })
   async refreshPage(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.pagesService.refreshPage(id);
+    return this.service.refreshPage(id);
   }
 
   @Delete(':id')
@@ -88,6 +88,6 @@ export class PagesController {
     description: '특정 노션 페이지 삭제 API',
   })
   async deletePageByPageId(@Param('id') id: number): Promise<ResponseEntity<string>> {
-    return this.pagesService.deletePage(id);
+    return this.service.deletePage(id);
   }
 }

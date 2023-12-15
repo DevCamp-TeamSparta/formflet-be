@@ -10,7 +10,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly service: AuthService) {}
 
   @Post('/login')
   @ApiOperation({ summary: '로그인 API', description: '로그인 API' })
@@ -18,13 +18,13 @@ export class AuthController {
     @Body() requestDto: AuthRequestDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseEntity<UsersResponseDto>> {
-    return this.authService.logIn(requestDto, res);
+    return this.service.logIn(requestDto, res);
   }
 
   @Delete('/logout')
   @UseGuards(AuthGuard())
   @ApiOperation({ summary: '로그아웃 API', description: '로그아웃 API' })
   async logout(@GetUser() user: User): Promise<ResponseEntity<string>> {
-    return this.authService.logout(user);
+    return this.service.logout(user);
   }
 }
