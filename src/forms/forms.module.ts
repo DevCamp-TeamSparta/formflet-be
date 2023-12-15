@@ -6,16 +6,16 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from '../auth/auth.module';
 import { Form } from './entities/forms.entity';
 import { FormDetail } from './entities/forms-detail.entity';
-import { FormResponse } from './entities/forms-response.entity';
+import { FormReply } from './entities/forms-reply.entity';
 import { FormsRepository } from './repositories/forms.repository';
 import { FormsDetailService } from './services/forms-detail.service';
 import { FormsDetailRepository } from './repositories/forms-detail.repository';
-import { FormsResponseService } from './services/forms-response.service';
-import { FormsResponseRepository } from './repositories/forms-response.repository';
+import { FormsReplyService } from './services/forms-reply.service';
+import { FormsReplyRepository } from './repositories/forms-reply.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Form, FormDetail, FormResponse]),
+    TypeOrmModule.forFeature([Form, FormDetail, FormReply]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
   ],
@@ -25,9 +25,9 @@ import { FormsResponseRepository } from './repositories/forms-response.repositor
     FormsRepository,
     FormsDetailService,
     FormsDetailRepository,
-    FormsResponseService,
-    FormsResponseRepository,
+    FormsReplyService,
+    FormsReplyRepository,
   ],
-  exports: [FormsService, FormsDetailService, FormsResponseService],
+  exports: [FormsService, FormsDetailService, FormsReplyService],
 })
 export class FormsModule {}

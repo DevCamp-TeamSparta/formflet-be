@@ -9,7 +9,7 @@ import { FormsRequestDto } from '../controllers/dtos/reqeusts/forms-request.dto'
 export class FormsService {
   private readonly logger: Logger = new Logger('PagesService');
 
-  constructor(private readonly formsRepository: FormsRepository) {}
+  constructor(private readonly repository: FormsRepository) {}
 
   async createForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
     const form: Form = Builder<Form>()
@@ -20,6 +20,6 @@ export class FormsService {
       .guide(requestDto.guide)
       .build();
 
-    return await this.formsRepository.save(form);
+    return await this.repository.save(form);
   }
 }

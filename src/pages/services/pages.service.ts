@@ -19,7 +19,7 @@ import { PagesContentService } from './pages-content.service';
 import { PagesFontService } from './pages-font.service';
 import { FormsService } from '../../forms/services/forms.service';
 import { FormsDetailService } from '../../forms/services/forms-detail.service';
-import { FormsResponseService } from '../../forms/services/forms-response.service';
+import { FormsReplyService } from '../../forms/services/forms-reply.service';
 import { Form } from '../../forms/entities/forms.entity';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class PagesService {
     private readonly pagesFontService: PagesFontService,
     private readonly formsService: FormsService,
     private readonly formsDetailService: FormsDetailService,
-    private readonly formsResponseService: FormsResponseService,
+    private readonly formsResponseService: FormsReplyService,
   ) {}
 
   async registerPage(

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Form } from './forms.entity';
-import { FormResponse } from './forms-response.entity';
+import { FormReply } from './forms-reply.entity';
 
 @Entity()
 export class FormDetail {
@@ -20,9 +20,9 @@ export class FormDetail {
   @Column({ nullable: false })
   content: string;
 
-  @OneToMany(() => FormResponse, (formResponse) => formResponse.form, {
+  @OneToMany(() => FormReply, (fromReply) => fromReply.formDetail, {
     cascade: true,
     eager: true,
   })
-  formResponse: FormResponse[];
+  formReplies: FormReply[];
 }

@@ -1,15 +1,14 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Form } from './forms.entity';
 import { FormDetail } from './forms-detail.entity';
 
 @Entity()
-export class FormResponse {
+export class FormReply {
   @PrimaryGeneratedColumn()
-  readonly id: number;
+  id: number;
 
-  @ManyToOne(() => FormDetail, (formDetail) => formDetail.formResponse, { onDelete: 'CASCADE' })
+  @ManyToOne(() => FormDetail, (formDetail) => formDetail.formReplies, { onDelete: 'CASCADE' })
   @JoinColumn()
-  form: Form;
+  formDetail: FormDetail;
 
   @Column()
   answer: string;
