@@ -18,15 +18,68 @@ export class PagesUtil {
 
     await this.openToggles(page);
 
-    const notionAppHTML: string = await page.evaluate(() => {
+    const notionAppHTML: string = await page.evaluate((notionUrl) => {
+      const domainName = new URL(notionUrl).hostname;
       const element = document.getElementById('notion-app');
+
+      const frame = element.querySelector('.notion-frame');
+      if (frame && frame instanceof HTMLElement) {
+        frame.style.width = '100%';
+      }
+      const cursor = element.querySelector('.notion-cursor-listener');
+      if (cursor && cursor instanceof HTMLElement) {
+        cursor.style.width = '100%';
+      }
+
+      const images = element.querySelectorAll('img');
+      images.forEach((img) => {
+        const src = img.getAttribute('src');
+        if (src && !src.startsWith('https://')) {
+          const imgSrc = `https://${domainName}${src}`;
+          img.setAttribute('src', imgSrc);
+        }
+      });
+
+      const anchors = element.querySelectorAll('a');
+      anchors.forEach((anchor) => {
+        const src = anchor.getAttribute('href');
+        if (src && !src.startsWith('https://')) {
+          const anchorSrc = `https://${domainName}${src}`;
+          anchor.setAttribute('href', anchorSrc);
+        }
+      });
+
+      const topbar = element.querySelector('header');
+      if (!topbar) return;
+      while (topbar.hasChildNodes()) {
+        const child = topbar.firstChild;
+        if (child) {
+          topbar.removeChild(child);
+        }
+      }
+
+      const toggles = element.querySelectorAll('div[aria-label="닫기"]');
+      toggles.forEach((toggle) => {
+        const svg = toggle.querySelector('svg');
+        const sibling = toggle.parentElement?.nextElementSibling;
+        if (sibling) {
+          Array.from(sibling.children).forEach((element, index) => {
+            if (index === 0) return;
+            const child = element as HTMLElement;
+            if (child instanceof HTMLElement) {
+              child.style.display = 'none';
+              if (svg) {
+                svg.style.transform = 'rotate(90deg)';
+              }
+            }
+          });
+        }
+      });
+
       return element ? element.innerHTML : '';
-    });
+    }, notionUrl);
 
     await browser.close();
-    // const domainName: string = new URL(url).hostname;
-
-    // return { props: { notionAppHTML, domainName } };
     return notionAppHTML;
   }
 
