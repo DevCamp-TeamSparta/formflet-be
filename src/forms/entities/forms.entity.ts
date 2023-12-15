@@ -15,12 +15,6 @@ export class Form {
   status: boolean;
 
   @Column()
-  title: string;
-
-  @Column()
-  description: string;
-
-  @Column()
   guide: string;
 
   @OneToMany(() => FormDetail, (formDetail) => formDetail.form, {
@@ -32,8 +26,6 @@ export class Form {
   constructor(page: Page, status: boolean, title: string, description: string, guide: string) {
     this.page = page;
     this.status = status;
-    this.title = title;
-    this.description = description;
     this.guide = guide;
   }
 }

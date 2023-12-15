@@ -67,7 +67,6 @@ export class PagesController {
     @Param('id') id: number,
     @Body() requestDto: PagesEditRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
-    console.log(`font : ${requestDto}`);
     return this.service.editPage(id, requestDto);
   }
 

@@ -121,15 +121,27 @@ export class PagesService {
   ): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start editPage');
 
-    const targetPage: Page = await this.pagesRepository.findOneBy({ id });
+    // page 조회
+    const editPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    await this.pagesFontService.updatePageFont(targetPage, requestDto.font.type);
-    const form: Form = await this.formsService.createForm(targetPage, requestDto.form);
-    await this.formsDetailService.createFormDetail(form, requestDto.formDetail);
+    // form 조회
+    const form: Form = await this.formsService.getFormByPage(editPage);
 
-    const responsePage: Page = await this.pagesRepository.findOneBy({ id });
+    // font 반영
+    await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
 
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(responsePage);
+    // form 존재할 경우 업데이트 없으면 생성
+    if (form) {
+      await this.formsService.updateForm(editPage, requestDto.form);
+    } else {
+      await this.formsService.createForm(editPage, requestDto.form);
+    }
+
+    // 결과 조회
+    const resultPage: Page = await this.pagesRepository.findOneBy({ id });
+
+    // builder 생성
+    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(resultPage);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }

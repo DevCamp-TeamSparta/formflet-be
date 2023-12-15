@@ -15,11 +15,22 @@ export class FormsService {
     const form: Form = Builder<Form>()
       .page(page)
       .status(requestDto.status)
-      .title(requestDto.title)
-      .description(requestDto.description)
       .guide(requestDto.guide)
       .build();
 
     return await this.repository.save(form);
+  }
+
+  async getFormByPage(page: Page): Promise<Form> {
+    return await this.repository.findOneBy({ page: { id: page.id } });
+  }
+
+  async updateForm(page: Page, requestDto: FormsRequestDto) {
+    const form: Form = await this.getFormByPage(page);
+
+    form.status = requestDto.status;
+    form.guide = requestDto.guide;
+
+    await this.repository.save(form);
   }
 }
