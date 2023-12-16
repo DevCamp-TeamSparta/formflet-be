@@ -21,6 +21,8 @@ import { FormsService } from '../../forms/services/forms.service';
 import { FormsDetailService } from '../../forms/services/forms-detail.service';
 import { FormsReplyService } from '../../forms/services/forms-reply.service';
 import { Form } from '../../forms/entities/forms.entity';
+import { CtasService } from '../../ctas/services/ctas.service';
+import { Cta } from '../../ctas/entities/cta.entity';
 
 @Injectable()
 export class PagesService {
@@ -35,6 +37,7 @@ export class PagesService {
     private readonly formsService: FormsService,
     private readonly formsDetailService: FormsDetailService,
     private readonly formsResponseService: FormsReplyService,
+    private readonly ctasService: CtasService,
   ) {}
 
   async registerPage(
@@ -88,7 +91,7 @@ export class PagesService {
   }
 
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
-    const pageList: Page[] = await this.pagesRepository.findBy({ user });
+    const pageList: Page[] = await this.pagesRepository.findBy({ user: { id: user.id } });
 
     try {
       const responseDtoList: PagesResponseDto[] = [];
@@ -124,14 +127,15 @@ export class PagesService {
     // page 조회
     const editPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    // form 조회
+    // form 및 cta 조회
     const form: Form = await this.formsService.getFormByPage(editPage);
+    const cta: Cta = await this.ctasService.getCtaByPageId(editPage);
 
     // font 반영
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
 
     // form 존재할 경우 업데이트 없으면 생성
-    if (await this.formsService.getFormByPage(editPage)) {
+    if (form) {
       await this.formsService.updateForm(editPage, requestDto.form);
       await this.formsDetailService.updateFormDetail(form, requestDto.form.guide);
     } else {
@@ -139,30 +143,44 @@ export class PagesService {
       await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
     }
 
+    // cta 존재할 경우 업데이트 없으면 생성
+    if (cta) {
+      await this.ctasService.updateCta(editPage, requestDto.cta);
+    } else {
+      await this.ctasService.createCta(editPage, requestDto.cta);
+    }
+
     // 결과 조회
     const resultPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    // builder 생성
+    // 응답 생성 및 return
     const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(resultPage);
-
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
 
   async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
+    // 대상 page 조회
     const targetPage: Page = await this.pagesRepository.findOneBy({ id });
 
+    // notion scrapping
     const content: string = await this.pagesUtil.scrapNotionPage(targetPage.url);
 
+    // scrapping data backup 및 content 업데이트
     await this.pagesBackupService.updatePageBackup(targetPage, content);
     await this.pagesContentService.updatePageContent(targetPage, content);
 
-    await this.pagesFontService.updatePageFont(targetPage, 'default');
+    // 폰트 초기화
+    await this.pagesFontService.updatePageFont(targetPage, '');
 
+    // form 및 cta 삭제
     await this.formsService.deleteAllFormByPageId(targetPage);
+    await this.ctasService.deleteCtaByPageId(targetPage);
 
+    // 적용된 page 조회 후 응답생성
     const reflectionPage: Page = await this.pagesRepository.findOneBy({ id });
     const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(reflectionPage);
 
+    // return
     return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);
   }
 

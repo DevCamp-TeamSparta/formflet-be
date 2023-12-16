@@ -13,6 +13,7 @@ import { PageBackup } from './page-backup.entity';
 import { PageDetail } from './page-detail.entity';
 import { PageFont } from './page-font.entity';
 import { Form } from '../../forms/entities/forms.entity';
+import { Cta } from '../../ctas/entities/cta.entity';
 
 @Entity()
 export class Page {
@@ -57,6 +58,12 @@ export class Page {
     eager: true,
   })
   form: Form;
+
+  @OneToOne(() => Cta, (cta) => cta.page, {
+    cascade: true,
+    eager: true,
+  })
+  cta: Cta;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -112,6 +112,7 @@ export class PagesUtil {
       .pageContent(page.pageContent)
       .pageFont(page.pageFont)
       .form(page.form)
+      .cta(page.cta)
       .build();
   }
 }

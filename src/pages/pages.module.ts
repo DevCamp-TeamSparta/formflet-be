@@ -17,6 +17,7 @@ import { PagesFontRepository } from './repositories/pages-font.repository';
 import { PagesContentService } from './services/pages-content.service';
 import { PagesContentRepository } from './repositories/pages-content.repository';
 import { FormsModule } from '../forms/forms.module';
+import { CtasModule } from '../ctas/ctas.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { FormsModule } from '../forms/forms.module';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
     FormsModule,
+    CtasModule,
   ],
   controllers: [PagesController],
   providers: [
