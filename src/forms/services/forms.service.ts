@@ -33,4 +33,8 @@ export class FormsService {
 
     await this.repository.save(form);
   }
+
+  async deleteAllFormByPageId(page: Page) {
+    await this.repository.delete({ page: { id: page.id } });
+  }
 }

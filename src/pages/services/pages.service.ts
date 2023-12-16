@@ -131,10 +131,12 @@ export class PagesService {
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
 
     // form 존재할 경우 업데이트 없으면 생성
-    if (form) {
+    if (await this.formsService.getFormByPage(editPage)) {
       await this.formsService.updateForm(editPage, requestDto.form);
+      await this.formsDetailService.updateFormDetail(form, requestDto.form.guide);
     } else {
-      await this.formsService.createForm(editPage, requestDto.form);
+      const form: Form = await this.formsService.createForm(editPage, requestDto.form);
+      await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
     }
 
     // 결과 조회
@@ -147,17 +149,19 @@ export class PagesService {
   }
 
   async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    const page: Page = await this.pagesRepository.findOneBy({ id });
+    const targetPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    const content: string = await this.pagesUtil.scrapNotionPage(page.url);
+    const content: string = await this.pagesUtil.scrapNotionPage(targetPage.url);
 
-    await this.pagesBackupService.updatePageBackup(page, content);
-    await this.pagesContentService.updatePageContent(page, content);
-    await this.pagesFontService.updatePageFont(page, 'default');
+    await this.pagesBackupService.updatePageBackup(targetPage, content);
+    await this.pagesContentService.updatePageContent(targetPage, content);
 
-    await this.pagesRepository.save(page);
+    await this.pagesFontService.updatePageFont(targetPage, 'default');
 
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+    await this.formsService.deleteAllFormByPageId(targetPage);
+
+    const reflectionPage: Page = await this.pagesRepository.findOneBy({ id });
+    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(reflectionPage);
 
     return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);
   }

@@ -12,13 +12,7 @@ export class FormDetail {
   form: Form;
 
   @Column()
-  title: string;
-
-  @Column()
-  type: string;
-
-  @Column({ nullable: false })
-  content: string;
+  question: string;
 
   @OneToMany(() => FormReply, (fromReply) => fromReply.formDetail, {
     cascade: true,
