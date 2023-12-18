@@ -22,6 +22,7 @@ export class PagesUtil {
       )
       .pageFont(page.pageFont)
       .form(page.form)
+      .cta(page.cta)
       .build();
   }
 }

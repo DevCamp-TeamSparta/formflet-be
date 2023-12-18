@@ -5,7 +5,7 @@ import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('api/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly service: UsersService) {}
 
   @Post('/join')
   @ApiOperation({
@@ -13,7 +13,7 @@ export class UsersController {
     description: '회원가입 API',
   })
   joinUser(@Body(ValidationPipe) createUserDto: JoinRequestDto) {
-    return this.usersService.joinUser(createUserDto);
+    return this.service.joinUser(createUserDto);
   }
 
   @Get('/check-email')
@@ -22,6 +22,6 @@ export class UsersController {
     description: '이메일 중복체크 API',
   })
   checkEmail(@Query('email') email: string) {
-    return this.usersService.checkEmail(email);
+    return this.service.checkEmail(email);
   }
 }

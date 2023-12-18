@@ -21,7 +21,7 @@ export class PagesContentService {
   async updatePageContent(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start updatePageContent');
 
-    const pageContent: PageDetail = await this.repository.findOneBy({ page });
+    const pageContent: PageDetail = await this.repository.findOneBy({ page: { id: page.id } });
     pageContent.content = content;
 
     await this.repository.save(pageContent);

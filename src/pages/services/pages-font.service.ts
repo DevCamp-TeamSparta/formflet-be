@@ -13,7 +13,7 @@ export class PagesFontService {
   async createPageFont(page: Page): Promise<PageFont> {
     this.logger.log('start createPageFont');
 
-    const pageFont: PageFont = Builder<PageFont>().page(page).type('default').build();
+    const pageFont: PageFont = Builder<PageFont>().page(page).type('').build();
     await this.repository.save(pageFont);
 
     return pageFont;

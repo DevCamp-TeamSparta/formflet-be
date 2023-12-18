@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PagesModule } from './pages/pages.module';
 import { typeOrmConfig } from './configs/type-orm.config';
 import { FormsModule } from './forms/forms.module';
+import { CtasModule } from './ctas/ctas.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FormsModule } from './forms/forms.module';
     AuthModule,
     PagesModule,
     FormsModule,
+    CtasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PagesFontRequestDto } from './pages-font-request.dto';
 import { FormsRequestDto } from '../../../../forms/controllers/dtos/reqeusts/forms-request.dto';
-import { FormsDetailRequestDto } from '../../../../forms/controllers/dtos/reqeusts/forms-detail-request.dto';
+import { CtasRequestDto } from '../../../../ctas/controllers/dtos/requests/ctas-request.dto';
 
 export class PagesEditRequestDto {
   @IsNotEmpty()
@@ -14,6 +14,6 @@ export class PagesEditRequestDto {
   form: FormsRequestDto;
 
   @IsNotEmpty()
-  @ApiProperty({ description: '폼 질문 설정' })
-  formDetail: FormsDetailRequestDto[];
+  @ApiProperty({ description: 'cat 설정' })
+  cta: CtasRequestDto;
 }
