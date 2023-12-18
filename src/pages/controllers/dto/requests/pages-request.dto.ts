@@ -16,4 +16,9 @@ export class PagesRequestDto {
   @IsNotEmpty()
   @ApiProperty({ description: '노션 페이지 URL' })
   url: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: '페이지 content' })
+  content: string;
 }
