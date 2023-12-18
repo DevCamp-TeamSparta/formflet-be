@@ -13,7 +13,6 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
 import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
-import { PagesUtil } from '../utills/pages.util';
 import { PagesBackupService } from './pages-backup.service';
 import { PagesContentService } from './pages-content.service';
 import { PagesFontService } from './pages-font.service';
@@ -30,10 +29,10 @@ export class PagesService {
 
   constructor(
     private readonly pagesRepository: PagesRepository,
-    private readonly pagesUtil: PagesUtil,
     private readonly pagesBackupService: PagesBackupService,
     private readonly pagesContentService: PagesContentService,
     private readonly pagesFontService: PagesFontService,
+    private readonly pagesResponseDto: PagesResponseDto,
     private readonly formsService: FormsService,
     private readonly formsDetailService: FormsDetailService,
     private readonly formsResponseService: FormsReplyService,
@@ -73,7 +72,7 @@ export class PagesService {
     // default pageFont 생성
     await this.pagesFontService.createPageFont(page);
 
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
   }
@@ -83,7 +82,7 @@ export class PagesService {
     const page: Page = await this.pagesRepository.findOneBy({ domain });
 
     try {
-      const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
       return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', responseDto);
     } catch (e) {
       throw new NotFoundException('존재하지 않는 도메인');
@@ -97,7 +96,7 @@ export class PagesService {
       const responseDtoList: PagesResponseDto[] = [];
 
       for (const page of pageList) {
-        const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+        const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
         responseDtoList.push(responseDto);
       }
 
@@ -110,7 +109,7 @@ export class PagesService {
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
-      const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
 
       return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
     } catch (e) {
@@ -154,7 +153,7 @@ export class PagesService {
     const resultPage: Page = await this.pagesRepository.findOneBy({ id });
 
     // 응답 생성 및 return
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(resultPage);
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage)
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
 
@@ -174,7 +173,7 @@ export class PagesService {
 
     // 적용된 page 조회 후 응답생성
     const reflectionPage: Page = await this.pagesRepository.findOneBy({ id });
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(reflectionPage);
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(reflectionPage);
 
     // return
     return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);
