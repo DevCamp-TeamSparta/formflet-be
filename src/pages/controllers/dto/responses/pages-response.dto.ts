@@ -8,7 +8,7 @@ export class PagesResponseDto {
   readonly title: string;
   readonly domain: string;
   readonly url: string;
-  readonly pageContent: PageDetail;
+  readonly pageDetail: PageDetail;
   readonly pageFont: PageFont;
   readonly form: Form;
   readonly cta: Cta;
@@ -18,7 +18,7 @@ export class PagesResponseDto {
     title: string,
     domain: string,
     url: string,
-    pageContent: PageDetail,
+    pageDetail: PageDetail,
     pageFont: PageFont,
     form: Form,
     cta: Cta,
@@ -27,7 +27,7 @@ export class PagesResponseDto {
     this.title = title;
     this.domain = domain;
     this.url = url;
-    this.pageContent = pageContent;
+    this.pageDetail = pageDetail;
     this.pageFont = pageFont;
     this.form = form;
     this.cta = cta;

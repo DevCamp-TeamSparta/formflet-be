@@ -14,10 +14,10 @@ export class PagesUtil {
       .title(page.title)
       .domain(`${page.domain}.${process.env.DOMAIN}`)
       .url(page.url)
-      .pageContent(
-        page.pageContent && {
-          ...page.pageContent,
-          content: decodeURIComponent(page.pageContent.content),
+      .pageDetail(
+        page.pageDetail && {
+          ...page.pageDetail,
+          content: decodeURIComponent(page.pageDetail.content),
         },
       )
       .pageFont(page.pageFont)

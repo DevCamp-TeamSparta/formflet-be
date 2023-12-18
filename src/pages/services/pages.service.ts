@@ -67,7 +67,7 @@ export class PagesService {
     // await this.pagesUtil.scrapNotionPage(requestDto.url);
     const content = encodeURIComponent(requestDto.content);
     // scrapping data 생성
-    await this.pagesContentService.createPageContent(page, content);
+    await this.pagesContentService.createPageDetail(page, content);
     // Notion 수정사항 반영 여부를 위한 scrapping data backup 생성
     await this.pagesBackupService.createPageBackup(page, content);
     // default pageFont 생성
@@ -157,13 +157,13 @@ export class PagesService {
     const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(resultPage);
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
-  
+
   async refreshPage(id: number, content: string): Promise<ResponseEntity<PagesResponseDto>> {
     // 대상 page 조회
     const targetPage: Page = await this.pagesRepository.findOneBy({ id });
     // scrapping data backup 및 content 업데이트
     await this.pagesBackupService.updatePageBackup(targetPage, content);
-    await this.pagesContentService.updatePageContent(targetPage, content);
+    await this.pagesContentService.updatePageDetail(targetPage, content);
 
     // 폰트 초기화
     await this.pagesFontService.updatePageFont(targetPage, '');

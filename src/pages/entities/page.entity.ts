@@ -41,11 +41,11 @@ export class Page {
   })
   pageBackup: PageBackup;
 
-  @OneToOne(() => PageDetail, (pageContent) => pageContent.page, {
+  @OneToOne(() => PageDetail, (pageDetail) => pageDetail.page, {
     cascade: true,
     eager: true,
   })
-  pageContent: PageDetail;
+  pageDetail: PageDetail;
 
   @OneToOne(() => PageFont, (pageFont) => pageFont.page, {
     cascade: true,
@@ -77,7 +77,7 @@ export class Page {
     domain: string,
     url: string,
     pageBackup: PageBackup,
-    pageContent: PageDetail,
+    pageDetail: PageDetail,
     pageFont: PageFont,
   ) {
     this.user = user;
@@ -85,7 +85,7 @@ export class Page {
     this.domain = domain;
     this.url = url;
     this.pageBackup = pageBackup;
-    this.pageContent = pageContent;
+    this.pageDetail = pageDetail;
     this.pageFont = pageFont;
   }
 }

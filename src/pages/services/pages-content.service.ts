@@ -10,22 +10,22 @@ export class PagesContentService {
 
   constructor(private readonly repository: PagesContentRepository) {}
 
-  async createPageContent(page: Page, content: string): Promise<PageDetail> {
-    this.logger.log('start createPageContent');
-    const pageContent: PageDetail = Builder<PageDetail>().page(page).content(content).build();
-    await this.repository.save(pageContent);
+  async createPageDetail(page: Page, content: string): Promise<PageDetail> {
+    this.logger.log('start createPageDetail');
+    const pageDetail: PageDetail = Builder<PageDetail>().page(page).content(content).build();
+    await this.repository.save(pageDetail);
 
-    return pageContent;
+    return pageDetail;
   }
 
-  async updatePageContent(page: Page, content: string): Promise<PageDetail> {
-    this.logger.log('start updatePageContent');
+  async updatePageDetail(page: Page, content: string): Promise<PageDetail> {
+    this.logger.log('start updatePageDetail');
 
-    const pageContent: PageDetail = await this.repository.findOneBy({ page: { id: page.id } });
-    pageContent.content = content;
+    const pageDetail: PageDetail = await this.repository.findOneBy({ page: { id: page.id } });
+    pageDetail.content = content;
 
-    await this.repository.save(pageContent);
+    await this.repository.save(pageDetail);
 
-    return pageContent;
+    return pageDetail;
   }
 }

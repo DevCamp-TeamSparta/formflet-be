@@ -14,7 +14,7 @@ export class PageDetail {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Page, (page) => page.pageContent, { onDelete: 'CASCADE' })
+  @OneToOne(() => Page, (page) => page.pageDetail, { onDelete: 'CASCADE' })
   @JoinColumn()
   page: Page;
 
