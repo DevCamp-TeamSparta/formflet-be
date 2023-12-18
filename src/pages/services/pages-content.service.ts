@@ -12,7 +12,6 @@ export class PagesContentService {
 
   async createPageContent(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start createPageContent');
-
     const pageContent: PageDetail = Builder<PageDetail>().page(page).content(content).build();
     await this.repository.save(pageContent);
 

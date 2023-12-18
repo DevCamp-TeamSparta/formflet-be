@@ -63,9 +63,9 @@ export class PagesService {
     // page 저장
     await this.pagesRepository.save(page);
 
-    // scrapping 시작
-    const content: string = await this.pagesUtil.scrapNotionPage(requestDto.url);
-
+    // // scrapping 시작
+    // await this.pagesUtil.scrapNotionPage(requestDto.url);
+    const content = encodeURIComponent(requestDto.content);
     // scrapping data 생성
     await this.pagesContentService.createPageContent(page, content);
     // Notion 수정사항 반영 여부를 위한 scrapping data backup 생성
@@ -157,14 +157,10 @@ export class PagesService {
     const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(resultPage);
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
-
-  async refreshPage(id: number): Promise<ResponseEntity<PagesResponseDto>> {
+  
+  async refreshPage(id: number, content: string): Promise<ResponseEntity<PagesResponseDto>> {
     // 대상 page 조회
     const targetPage: Page = await this.pagesRepository.findOneBy({ id });
-
-    // notion scrapping
-    const content: string = await this.pagesUtil.scrapNotionPage(targetPage.url);
-
     // scrapping data backup 및 content 업데이트
     await this.pagesBackupService.updatePageBackup(targetPage, content);
     await this.pagesContentService.updatePageContent(targetPage, content);

@@ -76,8 +76,8 @@ export class PagesController {
     summary: '페이지 새로고침 API',
     description: '페이지 새로고침 API',
   })
-  async refreshPage(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.service.refreshPage(id);
+  async refreshPage(@Param('id') id: number, @Body() dto:{content:string}): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.service.refreshPage(id, dto.content);
   }
 
   @Delete(':id')
