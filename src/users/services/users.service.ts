@@ -9,15 +9,15 @@ import { UserInterface } from '../interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly repository: UserRepository) {}
 
   async joinUser(createUserDto: JoinRequestDto): Promise<ResponseEntity<UsersResponseDto>> {
     createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
 
-    const user: UserInterface = this.userRepository.create(createUserDto);
+    const user: UserInterface = this.repository.create(createUserDto);
 
     try {
-      await this.userRepository.save(user);
+      await this.repository.save(user);
     } catch (e) {
       if (e.errno === 1062) {
         throw new ConflictException('이미 존재하는 email 입니다.');
@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   async checkEmail(email: string): Promise<ResponseEntity<string>> {
-    const user: UserInterface = await this.userRepository.findByEmail(email);
+    const user: UserInterface = await this.repository.findByEmail(email);
 
     if (user) {
       throw new ConflictException('이미 존재하는 email 입니다.');
