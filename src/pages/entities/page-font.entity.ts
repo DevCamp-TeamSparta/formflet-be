@@ -32,4 +32,8 @@ export class PageFont {
   constructor(type: string) {
     this.type = type;
   }
+
+  update(type: string): void {
+    this.type = type;
+  }
 }
