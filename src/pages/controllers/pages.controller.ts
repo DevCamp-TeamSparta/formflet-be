@@ -68,19 +68,6 @@ export class PagesController {
     return this.service.editPage(id, requestDto);
   }
 
-  @Patch('refresh/:id')
-  @UseGuards(AuthGuard())
-  @ApiOperation({
-    summary: '페이지 새로고침 API',
-    description: '페이지 새로고침 API',
-  })
-  async refreshPage(
-    @Param('id') id: number,
-    @Body() dto: { content: string },
-  ): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.service.refreshPage(id, dto.content);
-  }
-
   @Delete(':id')
   @UseGuards(AuthGuard())
   @ApiOperation({

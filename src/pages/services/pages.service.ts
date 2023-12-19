@@ -137,30 +137,6 @@ export class PagesService {
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
 
-  async refreshPage(id: number, content: string): Promise<ResponseEntity<PagesResponseDto>> {
-    this.logger.log('refreshPage');
-
-    // 대상 page 조회
-    const targetPage: Page = await this.pagesRepository.findById(id);
-    // scrapping data backup 및 content 업데이트
-    await this.pagesBackupService.updatePageBackup(targetPage, content);
-    await this.pagesDetailService.updatePageDetail(targetPage, content);
-
-    // 폰트 초기화
-    await this.pagesFontService.updatePageFont(targetPage, '');
-
-    // form 및 cta 삭제
-    await this.formsService.deleteAllFormByPageId(targetPage);
-    await this.ctasService.deleteCtaByPageId(targetPage);
-
-    // 적용된 page 조회 후 응답생성
-    const reflectionPage: Page = await this.pagesRepository.findById(id);
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(reflectionPage);
-
-    // return
-    return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);
-  }
-
   async deletePage(id: number): Promise<ResponseEntity<string>> {
     this.logger.log('deletePage');
 
