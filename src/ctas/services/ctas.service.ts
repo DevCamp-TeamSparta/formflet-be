@@ -11,15 +11,15 @@ export class CtasService {
 
   constructor(private readonly repository: CtasRepository) {}
 
-  async createCta(page: Page, requestDto: CtasRequestDto): Promise<Cta> {
+  async createCta(page: Page): Promise<Cta> {
     const cta: Cta = Builder<Cta>()
       .page(page)
-      .status(requestDto.status)
-      .content(requestDto.content)
-      .link(requestDto.link)
-      .fontSize(requestDto.fontSize)
-      .fontColor(requestDto.fontColor)
-      .backgroundColor(requestDto.backgroundColor)
+      .status(true)
+      .content('')
+      .link('')
+      .fontSize('24px')
+      .fontColor('#FFFFFF')
+      .backgroundColor('#484848')
       .build();
 
     return await this.repository.save(cta);
