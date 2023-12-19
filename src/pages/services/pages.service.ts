@@ -1,10 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { PagesRequestDto } from '../controllers/dto/requests/pages-request.dto';
 import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 import { PagesRepository } from '../repositories/pages.repository';
@@ -13,7 +7,6 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
 import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
-import { PagesUtil } from '../utills/pages.util';
 import { PagesBackupService } from './pages-backup.service';
 import { PagesContentService } from './pages-content.service';
 import { PagesFontService } from './pages-font.service';
@@ -22,7 +15,6 @@ import { FormsDetailService } from '../../forms/services/forms-detail.service';
 import { FormsReplyService } from '../../forms/services/forms-reply.service';
 import { Form } from '../../forms/entities/forms.entity';
 import { CtasService } from '../../ctas/services/ctas.service';
-import { Cta } from '../../ctas/entities/cta.entity';
 
 @Injectable()
 export class PagesService {
@@ -30,20 +22,17 @@ export class PagesService {
 
   constructor(
     private readonly pagesRepository: PagesRepository,
-    private readonly pagesUtil: PagesUtil,
     private readonly pagesBackupService: PagesBackupService,
     private readonly pagesContentService: PagesContentService,
     private readonly pagesFontService: PagesFontService,
+    private readonly pagesResponseDto: PagesResponseDto,
     private readonly formsService: FormsService,
     private readonly formsDetailService: FormsDetailService,
     private readonly formsResponseService: FormsReplyService,
     private readonly ctasService: CtasService,
   ) {}
 
-  async registerPage(
-    user: User,
-    requestDto: PagesRequestDto,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
     this.logger.log('start registerPage');
     this.logger.log(`title: ${requestDto.title}`);
     this.logger.log(`domain: ${requestDto.domain}`);
@@ -63,19 +52,20 @@ export class PagesService {
     // page 저장
     await this.pagesRepository.save(page);
 
-    // // scrapping 시작
-    // await this.pagesUtil.scrapNotionPage(requestDto.url);
+    // Notion content encode
     const content = encodeURIComponent(requestDto.content);
-    // scrapping data 생성
+    // Notion data 생성
     await this.pagesContentService.createPageDetail(page, content);
-    // Notion 수정사항 반영 여부를 위한 scrapping data backup 생성
+    // Notion 수정사항 반영 여부를 위한 Notion data backup 생성
     await this.pagesBackupService.createPageBackup(page, content);
     // default pageFont 생성
     await this.pagesFontService.createPageFont(page);
+    // default form 생성
+    await this.formsService.createForm(page);
+    // default cta 생성
+    await this.ctasService.createCta(page);
 
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
-
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
+    return ResponseEntity.OK('나의 웹페이지 등록');
   }
 
   async getReleasePageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
@@ -83,7 +73,7 @@ export class PagesService {
     const page: Page = await this.pagesRepository.findOneBy({ domain });
 
     try {
-      const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
       return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', responseDto);
     } catch (e) {
       throw new NotFoundException('존재하지 않는 도메인');
@@ -97,7 +87,7 @@ export class PagesService {
       const responseDtoList: PagesResponseDto[] = [];
 
       for (const page of pageList) {
-        const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+        const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
         responseDtoList.push(responseDto);
       }
 
@@ -110,7 +100,7 @@ export class PagesService {
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
-      const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(page);
+      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
 
       return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
     } catch (e) {
@@ -118,43 +108,29 @@ export class PagesService {
     }
   }
 
-  async editPage(
-    id: number,
-    requestDto: PagesEditRequestDto,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async editPage(id: number, requestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start editPage');
 
     // page 조회
     const editPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    // form 및 cta 조회
-    const form: Form = await this.formsService.getFormByPage(editPage);
-    const cta: Cta = await this.ctasService.getCtaByPageId(editPage);
-
-    // font 반영
+    // font update
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
 
-    // form 존재할 경우 업데이트 없으면 생성
-    if (form) {
-      await this.formsService.updateForm(editPage, requestDto.form);
-      await this.formsDetailService.updateFormDetail(form, requestDto.form.guide);
-    } else {
-      const form: Form = await this.formsService.createForm(editPage, requestDto.form);
-      await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
-    }
+    // form 및 formDetail update
+    await this.formsService.updateForm(editPage, requestDto.form);
 
-    // cta 존재할 경우 업데이트 없으면 생성
-    if (cta) {
-      await this.ctasService.updateCta(editPage, requestDto.cta);
-    } else {
-      await this.ctasService.createCta(editPage, requestDto.cta);
-    }
+    const form: Form = await this.formsService.getFormByPage(editPage);
+    await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
+
+    // cta update
+    await this.ctasService.updateCta(editPage, requestDto.cta);
 
     // 결과 조회
     const resultPage: Page = await this.pagesRepository.findOneBy({ id });
 
     // 응답 생성 및 return
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(resultPage);
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage);
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
 
@@ -174,7 +150,7 @@ export class PagesService {
 
     // 적용된 page 조회 후 응답생성
     const reflectionPage: Page = await this.pagesRepository.findOneBy({ id });
-    const responseDto: PagesResponseDto = this.pagesUtil.buildPagesResponseDto(reflectionPage);
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(reflectionPage);
 
     // return
     return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);

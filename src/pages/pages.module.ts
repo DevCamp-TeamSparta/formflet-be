@@ -9,7 +9,6 @@ import { PagesRepository } from './repositories/pages.repository';
 import { PageBackup } from './entities/page-backup.entity';
 import { PageDetail } from './entities/page-detail.entity';
 import { PageFont } from './entities/page-font.entity';
-import { PagesUtil } from './utills/pages.util';
 import { PagesBackupService } from './services/pages-backup.service';
 import { PagesBackupRepository } from './repositories/pages-backup.repository';
 import { PagesFontService } from './services/pages-font.service';
@@ -18,6 +17,7 @@ import { PagesContentService } from './services/pages-content.service';
 import { PagesContentRepository } from './repositories/pages-content.repository';
 import { FormsModule } from '../forms/forms.module';
 import { CtasModule } from '../ctas/ctas.module';
+import { PagesResponseDto } from "./controllers/dto/responses/pages-response.dto";
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { CtasModule } from '../ctas/ctas.module';
     PagesContentRepository,
     PagesFontService,
     PagesFontRepository,
-    PagesUtil,
+    PagesResponseDto
   ],
 })
 export class PagesModule {}

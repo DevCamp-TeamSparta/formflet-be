@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ResponseEntity } from '../../configs/response-entity';
 import { User } from '../../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -16,11 +16,19 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async logIn(requestDto: AuthRequestDto, res: Response): Promise<ResponseEntity<UsersResponseDto>> {
+  async logIn(
+    requestDto: AuthRequestDto,
+    res: Response,
+  ): Promise<ResponseEntity<UsersResponseDto>> {
     const user: User = await this.userRepository.findByEmail(requestDto.email);
+
+    if (!user) {
+      throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');
+    }
+
     const isAuth: boolean = await bcrypt.compare(requestDto.password, user.password);
 
-    if (!user || !isAuth) {
+    if (!isAuth) {
       throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');
     }
 
