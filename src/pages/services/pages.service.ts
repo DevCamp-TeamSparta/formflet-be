@@ -1,10 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { PagesRequestDto } from '../controllers/dto/requests/pages-request.dto';
 import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 import { PagesRepository } from '../repositories/pages.repository';
@@ -38,10 +32,7 @@ export class PagesService {
     private readonly ctasService: CtasService,
   ) {}
 
-  async registerPage(
-    user: User,
-    requestDto: PagesRequestDto,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
     this.logger.log('start registerPage');
     this.logger.log(`title: ${requestDto.title}`);
     this.logger.log(`domain: ${requestDto.domain}`);
@@ -74,9 +65,7 @@ export class PagesService {
     // default cta 생성
     await this.ctasService.createCta(page);
 
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
-
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
+    return ResponseEntity.OK('나의 웹페이지 등록');
   }
 
   async getReleasePageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
@@ -119,10 +108,7 @@ export class PagesService {
     }
   }
 
-  async editPage(
-    id: number,
-    requestDto: PagesEditRequestDto,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async editPage(id: number, requestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('start editPage');
 
     // page 조회

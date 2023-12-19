@@ -19,10 +19,7 @@ export class PagesController {
     summary: '노션 페이지 등록 API',
     description: '노션 페이지 등록 API',
   })
-  async registerPage(
-    @GetUser() user: User,
-    @Body() requestDto: PagesRequestDto,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async registerPage(@GetUser() user: User, @Body() requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
     return this.service.registerPage(user, requestDto);
   }
 
@@ -31,9 +28,7 @@ export class PagesController {
     summary: '배포 페이지 조회 API',
     description: '배포 페이지 조회 API',
   })
-  async getReleasePageByDomain(
-    @Param('domain') domain: string,
-  ): Promise<ResponseEntity<PagesResponseDto>> {
+  async getReleasePageByDomain(@Param('domain') domain: string): Promise<ResponseEntity<PagesResponseDto>> {
     return this.service.getReleasePageByDomain(domain);
   }
 
@@ -76,7 +71,10 @@ export class PagesController {
     summary: '페이지 새로고침 API',
     description: '페이지 새로고침 API',
   })
-  async refreshPage(@Param('id') id: number, @Body() dto:{content:string}): Promise<ResponseEntity<PagesResponseDto>> {
+  async refreshPage(
+    @Param('id') id: number,
+    @Body() dto: { content: string },
+  ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.service.refreshPage(id, dto.content);
   }
 
