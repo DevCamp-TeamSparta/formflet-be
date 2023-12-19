@@ -12,6 +12,7 @@ export class PagesDetailService {
 
   async createPageDetail(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start createPageDetail');
+
     const pageDetail: PageDetail = Builder<PageDetail>().page(page).content(content).build();
     await this.repository.save(pageDetail);
 
