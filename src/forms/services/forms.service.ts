@@ -11,11 +11,20 @@ export class FormsService {
 
   constructor(private readonly repository: FormsRepository) {}
 
-  async createForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
+  async createForm(page: Page): Promise<Form> {
     const form: Form = Builder<Form>()
       .page(page)
-      .status(requestDto.status)
-      .guide(requestDto.guide)
+      .status(true)
+      .guide(
+        '[제목] 제목을 입력해주세요.\n' +
+          '[텍스트] 폼 작성을 위한 샘플 양식입니다. 폼 편집 탭에서 자유롭게 수정해주세요.\n' +
+          '[질문_*] 질문을 입력해주세요.\n' +
+          '[주관식] ex) 답변을 입력하세요.\n' +
+          '[질문_*] 두번째 질문을 입력해주세요.\n' +
+          '[객관식] 아시아_유럽\n' +
+          '[질문] 세번째 질문을 입력해주세요.\n' +
+          '[객관식_복수] 태평양_대서양',
+      )
       .build();
 
     return await this.repository.save(form);
