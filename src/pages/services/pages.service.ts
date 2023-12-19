@@ -62,17 +62,20 @@ export class PagesService {
     // page 저장
     await this.pagesRepository.save(page);
 
-    // // scrapping 시작
-    // await this.pagesUtil.scrapNotionPage(requestDto.url);
+    // Notion content encode
     const content = encodeURIComponent(requestDto.content);
-    // scrapping data 생성
+    // Notion data 생성
     await this.pagesContentService.createPageDetail(page, content);
-    // Notion 수정사항 반영 여부를 위한 scrapping data backup 생성
+    // Notion 수정사항 반영 여부를 위한 Notion data backup 생성
     await this.pagesBackupService.createPageBackup(page, content);
     // default pageFont 생성
     await this.pagesFontService.createPageFont(page);
+    // default form 생성
+    await this.formsService.createForm(page);
+    // default cta 생성
+    await this.ctasService.createCta(page);
 
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
   }
@@ -82,7 +85,7 @@ export class PagesService {
     const page: Page = await this.pagesRepository.findOneBy({ domain });
 
     try {
-      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
+      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
       return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', responseDto);
     } catch (e) {
       throw new NotFoundException('존재하지 않는 도메인');
@@ -96,7 +99,7 @@ export class PagesService {
       const responseDtoList: PagesResponseDto[] = [];
 
       for (const page of pageList) {
-        const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
+        const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
         responseDtoList.push(responseDto);
       }
 
@@ -109,7 +112,7 @@ export class PagesService {
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     try {
       const page: Page = await this.pagesRepository.findOneBy({ id });
-      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page)
+      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
 
       return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
     } catch (e) {
@@ -153,7 +156,7 @@ export class PagesService {
     const resultPage: Page = await this.pagesRepository.findOneBy({ id });
 
     // 응답 생성 및 return
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage)
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage);
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
   }
 
