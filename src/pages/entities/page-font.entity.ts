@@ -14,7 +14,7 @@ export class PageFont {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne((type) => Page, (page) => page.pageFont, {
+  @OneToOne(() => Page, (page) => page.pageFont, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
