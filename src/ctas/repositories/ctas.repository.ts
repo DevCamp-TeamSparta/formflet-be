@@ -15,7 +15,7 @@ export class CtasRepository extends Repository<Cta> {
     return await this.repository.findOneBy({ page: { id: page.id } });
   }
 
-  async deleteByPageId(page: Page) {
+  async deleteByPageId(page: Page): Promise<void> {
     await this.repository.delete({ page: { id: page.id } });
   }
 }
