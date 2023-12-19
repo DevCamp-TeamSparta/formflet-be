@@ -23,7 +23,8 @@ export class PagesBackupService {
     this.logger.log('start updatePageBackup');
 
     const pageBackup: PageBackup = await this.repository.findByPage(page);
-    pageBackup.content = content;
+
+    pageBackup.update(content);
 
     await this.repository.save(pageBackup);
 
