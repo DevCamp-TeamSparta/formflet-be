@@ -23,7 +23,7 @@ export class Form {
   })
   formDetail: FormDetail[];
 
-  constructor(page: Page, status: boolean, title: string, description: string, guide: string) {
+  constructor(page: Page, status: boolean, guide: string) {
     this.page = page;
     this.status = status;
     this.guide = guide;
