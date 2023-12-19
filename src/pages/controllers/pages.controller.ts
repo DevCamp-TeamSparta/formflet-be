@@ -19,7 +19,10 @@ export class PagesController {
     summary: '노션 페이지 등록 API',
     description: '노션 페이지 등록 API',
   })
-  async registerPage(@GetUser() user: User, @Body() requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
+  async registerPage(
+    @GetUser() user: User,
+    @Body() requestDto: PagesRequestDto,
+  ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.service.registerPage(user, requestDto);
   }
 

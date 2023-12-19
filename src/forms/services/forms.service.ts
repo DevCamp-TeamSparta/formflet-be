@@ -31,14 +31,15 @@ export class FormsService {
   }
 
   async getFormByPage(page: Page): Promise<Form> {
-    return await this.repository.findOneBy({ page: { id: page.id } });
+    return await this.repository.findByPage(page);
   }
 
   async updateForm(page: Page, requestDto: FormsRequestDto) {
+    this.logger.log('updateForm');
+
     const form: Form = await this.getFormByPage(page);
 
-    form.status = requestDto.status;
-    form.guide = requestDto.guide;
+    form.update(requestDto);
 
     await this.repository.save(form);
   }
