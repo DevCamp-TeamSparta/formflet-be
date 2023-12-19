@@ -8,7 +8,7 @@ import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
 import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
 import { PagesBackupService } from './pages-backup.service';
-import { PagesContentService } from './pages-content.service';
+import { PagesDetailService } from './pages-detail.service';
 import { PagesFontService } from './pages-font.service';
 import { FormsService } from '../../forms/services/forms.service';
 import { FormsDetailService } from '../../forms/services/forms-detail.service';
@@ -23,7 +23,7 @@ export class PagesService {
   constructor(
     private readonly pagesRepository: PagesRepository,
     private readonly pagesBackupService: PagesBackupService,
-    private readonly pagesContentService: PagesContentService,
+    private readonly pagesDetailService: PagesDetailService,
     private readonly pagesFontService: PagesFontService,
     private readonly pagesResponseDto: PagesResponseDto,
     private readonly formsService: FormsService,
@@ -55,7 +55,7 @@ export class PagesService {
     // Notion content encode
     const content = encodeURIComponent(requestDto.content);
     // Notion data 생성
-    await this.pagesContentService.createPageDetail(page, content);
+    await this.pagesDetailService.createPageDetail(page, content);
     // Notion 수정사항 반영 여부를 위한 Notion data backup 생성
     await this.pagesBackupService.createPageBackup(page, content);
     // default pageFont 생성
@@ -139,7 +139,7 @@ export class PagesService {
     const targetPage: Page = await this.pagesRepository.findById(id);
     // scrapping data backup 및 content 업데이트
     await this.pagesBackupService.updatePageBackup(targetPage, content);
-    await this.pagesContentService.updatePageDetail(targetPage, content);
+    await this.pagesDetailService.updatePageDetail(targetPage, content);
 
     // 폰트 초기화
     await this.pagesFontService.updatePageFont(targetPage, '');

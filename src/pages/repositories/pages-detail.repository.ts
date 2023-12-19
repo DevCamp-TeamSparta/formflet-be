@@ -3,7 +3,7 @@ import { PageDetail } from '../entities/page-detail.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Page } from '../entities/page.entity';
 
-export class PagesContentRepository extends Repository<PageDetail> {
+export class PagesDetailRepository extends Repository<PageDetail> {
   constructor(
     @InjectRepository(PageDetail)
     private readonly repository: Repository<PageDetail>,

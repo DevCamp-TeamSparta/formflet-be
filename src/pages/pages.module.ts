@@ -13,11 +13,11 @@ import { PagesBackupService } from './services/pages-backup.service';
 import { PagesBackupRepository } from './repositories/pages-backup.repository';
 import { PagesFontService } from './services/pages-font.service';
 import { PagesFontRepository } from './repositories/pages-font.repository';
-import { PagesContentService } from './services/pages-content.service';
-import { PagesContentRepository } from './repositories/pages-content.repository';
+import { PagesDetailService } from './services/pages-detail.service';
+import { PagesDetailRepository } from './repositories/pages-detail.repository';
 import { FormsModule } from '../forms/forms.module';
 import { CtasModule } from '../ctas/ctas.module';
-import { PagesResponseDto } from "./controllers/dto/responses/pages-response.dto";
+import { PagesResponseDto } from './controllers/dto/responses/pages-response.dto';
 
 @Module({
   imports: [
@@ -33,11 +33,11 @@ import { PagesResponseDto } from "./controllers/dto/responses/pages-response.dto
     PagesRepository,
     PagesBackupService,
     PagesBackupRepository,
-    PagesContentService,
-    PagesContentRepository,
+    PagesDetailService,
+    PagesDetailRepository,
     PagesFontService,
     PagesFontRepository,
-    PagesResponseDto
+    PagesResponseDto,
   ],
 })
 export class PagesModule {}
