@@ -22,7 +22,7 @@ export class PagesBackupService {
   async updatePageBackup(page: Page, content: string): Promise<PageBackup> {
     this.logger.log('start updatePageBackup');
 
-    const pageBackup: PageBackup = await this.repository.findOneBy({ page: { id: page.id } });
+    const pageBackup: PageBackup = await this.repository.findByPage(page);
     pageBackup.content = content;
 
     await this.repository.save(pageBackup);

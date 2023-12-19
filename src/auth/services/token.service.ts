@@ -3,7 +3,6 @@ import { TokenRepository } from '../repository/token.repository';
 import * as bcrypt from 'bcrypt';
 import { TokenInterface } from '../interfaces/token.interface';
 import { JwtService } from '@nestjs/jwt';
-import { DeleteResult } from 'typeorm/query-builder/result/DeleteResult';
 
 @Injectable()
 export class TokenService {
@@ -11,7 +10,7 @@ export class TokenService {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly tokenRepository: TokenRepository,
+    private readonly repository: TokenRepository,
   ) {}
 
   async generateAccessToken({ user, res }): Promise<void> {
@@ -53,19 +52,19 @@ export class TokenService {
   async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
     const hashedToken: string = await bcrypt.hash(refreshToken, 10);
 
-    const tokenEntity: TokenInterface = this.tokenRepository.create({
+    const tokenEntity: TokenInterface = this.repository.create({
       userId: userId,
       refreshToken: hashedToken,
     });
 
-    await this.tokenRepository.save(tokenEntity);
+    await this.repository.save(tokenEntity);
   }
 
   async deleteRefreshToken(userId: number): Promise<void> {
     this.logger.log('start delete refreshToken');
 
     try {
-      await this.tokenRepository.delete(userId);
+      await this.repository.delete(userId);
     } catch (e) {
       throw new InternalServerErrorException('refreshToken 삭제 오류발생');
     }

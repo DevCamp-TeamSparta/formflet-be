@@ -1,17 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PagesContentRepository } from '../repositories/pages-content.repository';
+import { PagesDetailRepository } from '../repositories/pages-detail.repository';
 import { Page } from '../entities/page.entity';
 import { PageDetail } from '../entities/page-detail.entity';
 import { Builder } from 'builder-pattern';
 
 @Injectable()
-export class PagesContentService {
+export class PagesDetailService {
   private readonly logger: Logger = new Logger('PagesService');
 
-  constructor(private readonly repository: PagesContentRepository) {}
+  constructor(private readonly repository: PagesDetailRepository) {}
 
   async createPageDetail(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start createPageDetail');
+
     const pageDetail: PageDetail = Builder<PageDetail>().page(page).content(content).build();
     await this.repository.save(pageDetail);
 
@@ -21,7 +22,7 @@ export class PagesContentService {
   async updatePageDetail(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start updatePageDetail');
 
-    const pageDetail: PageDetail = await this.repository.findOneBy({ page: { id: page.id } });
+    const pageDetail: PageDetail = await this.repository.findByPage(page);
     pageDetail.content = content;
 
     await this.repository.save(pageDetail);

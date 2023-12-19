@@ -12,15 +12,12 @@ import { plainToInstance } from 'class-transformer';
 export class AuthService {
   private readonly logger: Logger = new Logger('AuthService');
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly repository: UserRepository,
     private readonly tokenService: TokenService,
   ) {}
 
-  async logIn(
-    requestDto: AuthRequestDto,
-    res: Response,
-  ): Promise<ResponseEntity<UsersResponseDto>> {
-    const user: User = await this.userRepository.findByEmail(requestDto.email);
+  async logIn(requestDto: AuthRequestDto, res: Response): Promise<ResponseEntity<UsersResponseDto>> {
+    const user: User = await this.repository.findByEmail(requestDto.email);
 
     if (!user) {
       throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');

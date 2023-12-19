@@ -29,7 +29,7 @@ export class CtasService {
     return await this.repository.findByPageId(page);
   }
 
-  async updateCta(page: Page, requestDto: CtasRequestDto) {
+  async updateCta(page: Page, requestDto: CtasRequestDto): Promise<void> {
     const cta: Cta = await this.getCtaByPageId(page);
 
     cta.update(requestDto);
@@ -37,7 +37,7 @@ export class CtasService {
     await this.repository.save(cta);
   }
 
-  async deleteCtaByPageId(page: Page) {
+  async deleteCtaByPageId(page: Page): Promise<void> {
     await this.repository.deleteByPageId(page);
   }
 }
