@@ -23,7 +23,8 @@ export class PagesFontService {
     this.logger.log('start updatePageFont');
 
     const pageFont: PageFont = await this.repository.findByPage(page);
-    pageFont.type = type;
+
+    pageFont.update(type);
 
     await this.repository.save(pageFont);
 

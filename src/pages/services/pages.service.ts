@@ -7,7 +7,6 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { Page } from '../entities/page.entity';
 import { Builder } from 'builder-pattern';
 import { PagesEditRequestDto } from '../controllers/dto/requests/pages-edit-request.dto';
-import { PagesBackupService } from './pages-backup.service';
 import { PagesDetailService } from './pages-detail.service';
 import { PagesFontService } from './pages-font.service';
 import { FormsService } from '../../forms/services/forms.service';
@@ -22,7 +21,6 @@ export class PagesService {
 
   constructor(
     private readonly pagesRepository: PagesRepository,
-    private readonly pagesBackupService: PagesBackupService,
     private readonly pagesDetailService: PagesDetailService,
     private readonly pagesFontService: PagesFontService,
     private readonly pagesResponseDto: PagesResponseDto,
@@ -49,19 +47,19 @@ export class PagesService {
     // page 저장
     await this.pagesRepository.save(page);
 
-    // Notion content encode
+    // notion content encode & notion content 생성
     const content: string = encodeURIComponent(requestDto.content);
-    // Notion data 생성
+
     await this.pagesDetailService.createPageDetail(page, content);
-    // Notion 수정사항 반영 여부를 위한 Notion data backup 생성
-    await this.pagesBackupService.createPageBackup(page, content);
-    // default pageFont 생성
+
+    // default pageFont, form, cta 생성
     await this.pagesFontService.createPageFont(page);
-    // default form 생성
+
     await this.formsService.createForm(page);
-    // default cta 생성
+
     await this.ctasService.createCta(page);
 
+    // response 생성
     const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
@@ -135,30 +133,6 @@ export class PagesService {
     // 응답 생성 및 return
     const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage);
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
-  }
-
-  async refreshPage(id: number, content: string): Promise<ResponseEntity<PagesResponseDto>> {
-    this.logger.log('refreshPage');
-
-    // 대상 page 조회
-    const targetPage: Page = await this.pagesRepository.findById(id);
-    // scrapping data backup 및 content 업데이트
-    await this.pagesBackupService.updatePageBackup(targetPage, content);
-    await this.pagesDetailService.updatePageDetail(targetPage, content);
-
-    // 폰트 초기화
-    await this.pagesFontService.updatePageFont(targetPage, '');
-
-    // form 및 cta 삭제
-    await this.formsService.deleteAllFormByPageId(targetPage);
-    await this.ctasService.deleteCtaByPageId(targetPage);
-
-    // 적용된 page 조회 후 응답생성
-    const reflectionPage: Page = await this.pagesRepository.findById(id);
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(reflectionPage);
-
-    // return
-    return ResponseEntity.OK_WITH_DATA('페이지 새로고침', responseDto);
   }
 
   async deletePage(id: number): Promise<ResponseEntity<string>> {
