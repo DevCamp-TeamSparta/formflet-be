@@ -34,9 +34,6 @@ export class PagesService {
 
   async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('registerPage');
-    this.logger.log(`title: ${requestDto.title}`);
-    this.logger.log(`domain: ${requestDto.domain}`);
-    this.logger.log(`url: ${requestDto.url}`);
 
     // domain 중복 검사
     await this.checkDomain(requestDto.domain);
@@ -116,7 +113,6 @@ export class PagesService {
 
   async editPage(id: number, requestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('editPage');
-    this.logger.log(requestDto);
 
     // page 조회
     const editPage: Page = await this.pagesRepository.findById(id);
