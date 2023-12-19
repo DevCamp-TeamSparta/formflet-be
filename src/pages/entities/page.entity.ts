@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { PageBackup } from './page-backup.entity';
 import { PageDetail } from './page-detail.entity';
 import { PageFont } from './page-font.entity';
 import { Form } from '../../forms/entities/forms.entity';
@@ -34,12 +33,6 @@ export class Page {
 
   @Column()
   url: string;
-
-  @OneToOne(() => PageBackup, (pageBackup) => pageBackup.page, {
-    cascade: true,
-    eager: true,
-  })
-  pageBackup: PageBackup;
 
   @OneToOne(() => PageDetail, (pageDetail) => pageDetail.page, {
     cascade: true,
@@ -71,20 +64,11 @@ export class Page {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  constructor(
-    user: User,
-    title: string,
-    domain: string,
-    url: string,
-    pageBackup: PageBackup,
-    pageDetail: PageDetail,
-    pageFont: PageFont,
-  ) {
+  constructor(user: User, title: string, domain: string, url: string, pageDetail: PageDetail, pageFont: PageFont) {
     this.user = user;
     this.title = title;
     this.domain = domain;
     this.url = url;
-    this.pageBackup = pageBackup;
     this.pageDetail = pageDetail;
     this.pageFont = pageFont;
   }

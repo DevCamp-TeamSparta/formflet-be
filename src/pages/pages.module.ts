@@ -6,11 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from '../auth/auth.module';
 import { Page } from './entities/page.entity';
 import { PagesRepository } from './repositories/pages.repository';
-import { PageBackup } from './entities/page-backup.entity';
 import { PageDetail } from './entities/page-detail.entity';
 import { PageFont } from './entities/page-font.entity';
-import { PagesBackupService } from './services/pages-backup.service';
-import { PagesBackupRepository } from './repositories/pages-backup.repository';
 import { PagesFontService } from './services/pages-font.service';
 import { PagesFontRepository } from './repositories/pages-font.repository';
 import { PagesDetailService } from './services/pages-detail.service';
@@ -21,7 +18,7 @@ import { PagesResponseDto } from './controllers/dto/responses/pages-response.dto
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Page, PageBackup, PageDetail, PageFont]),
+    TypeOrmModule.forFeature([Page, PageDetail, PageFont]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     AuthModule,
     FormsModule,
@@ -31,8 +28,6 @@ import { PagesResponseDto } from './controllers/dto/responses/pages-response.dto
   providers: [
     PagesService,
     PagesRepository,
-    PagesBackupService,
-    PagesBackupRepository,
     PagesDetailService,
     PagesDetailRepository,
     PagesFontService,

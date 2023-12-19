@@ -31,7 +31,7 @@ export class PageDetail {
     this.content = content;
   }
 
-  update(content: string): void {
+  /*  update(content: string): void {
     this.content = content;
-  }
+  }*/
 }
