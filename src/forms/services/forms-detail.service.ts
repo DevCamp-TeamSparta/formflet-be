@@ -9,6 +9,40 @@ export class FormsDetailService {
   private readonly logger: Logger = new Logger('PagesService');
   constructor(private readonly repository: FormsDetailRepository) {}
 
+  async editFormDetail(form: Form, guide: string): Promise<void> {
+    this.logger.log('editFormDetail');
+
+    // form guide 에서 정규식으로 질문 가져오기
+    const questionMatches = guide.matchAll(/\[질문.*?\] (.*?)\n/g);
+
+    // formDetail 가져오기
+    const formDetailList: FormDetail[] = await this.repository.findAllByForm(form);
+
+    // formDetail 없으면 create
+    if (!formDetailList.length) {
+      for (const match of questionMatches) {
+        const question: string = match[1];
+
+        const formDetail: FormDetail = Builder<FormDetail>().form(form).question(question).build();
+
+        await this.repository.save(formDetail);
+      }
+    }
+
+    // formDetail 있으면 update
+    for (const formDetail of formDetailList) {
+      const match = questionMatches.next();
+
+      if (!match.done) {
+        // question 있는지 확인 후 없으면 저장
+        formDetail.question = match.value[1];
+
+        // update formDetail 저장
+        await this.repository.save(formDetail);
+      }
+    }
+  }
+
   async createFormDetail(form: Form, guide: string): Promise<void> {
     const questionMatches = guide.matchAll(/\[질문.*?\] (.*?)\n/g);
     for (const match of questionMatches) {
@@ -21,18 +55,20 @@ export class FormsDetailService {
   }
 
   async updateFormDetail(form: Form, guide: string): Promise<void> {
+    // form guide 에서 정규식으로 질문 가져오기
     const questionMatches = guide.matchAll(/\[질문.*?\] (.*?)\n/g);
 
-    const formDetailList: FormDetail[] = await this.repository.findBy({ form: { id: form.id } });
+    // formDetail 가져오기
+    const formDetailList: FormDetail[] = await this.repository.findAllByForm(form);
 
     for (const formDetail of formDetailList) {
       const match = questionMatches.next();
 
       if (!match.done) {
-        // 'formDetail' 에 'question' 속성이 있는지 확인하고, 없다면 추가해주세요.
+        // question 있는지 확인 후 없으면 저장
         formDetail.question = match.value[1];
 
-        // 데이터베이스에 수정된 'formDetail' 을 저장합니다.
+        // update formDetail 저장
         await this.repository.save(formDetail);
       }
     }

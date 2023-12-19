@@ -36,10 +36,8 @@ export class FormsService {
 
   async updateForm(page: Page, requestDto: FormsRequestDto) {
     this.logger.log('updateForm');
-    this.logger.log(requestDto);
 
     const form: Form = await this.getFormByPage(page);
-    this.logger.log(form);
 
     form.update(requestDto);
 

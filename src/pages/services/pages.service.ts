@@ -124,7 +124,7 @@ export class PagesService {
     await this.formsService.updateForm(editPage, requestDto.form);
 
     const form: Form = await this.formsService.getFormByPage(editPage);
-    await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
+    await this.formsDetailService.editFormDetail(form, requestDto.form.guide);
 
     // cta update
     await this.ctasService.updateCta(editPage, requestDto.cta);
