@@ -32,8 +32,8 @@ export class PagesService {
     private readonly ctasService: CtasService,
   ) {}
 
-  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<string>> {
-    this.logger.log('start registerPage');
+  async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
+    this.logger.log('registerPage');
     this.logger.log(`title: ${requestDto.title}`);
     this.logger.log(`domain: ${requestDto.domain}`);
     this.logger.log(`url: ${requestDto.url}`);
@@ -53,7 +53,7 @@ export class PagesService {
     await this.pagesRepository.save(page);
 
     // Notion content encode
-    const content = encodeURIComponent(requestDto.content);
+    const content: string = encodeURIComponent(requestDto.content);
     // Notion data 생성
     await this.pagesDetailService.createPageDetail(page, content);
     // Notion 수정사항 반영 여부를 위한 Notion data backup 생성
@@ -65,10 +65,14 @@ export class PagesService {
     // default cta 생성
     await this.ctasService.createCta(page);
 
-    return ResponseEntity.OK('나의 웹페이지 등록');
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
+
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
   }
 
   async getReleasePageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
+    this.logger.log('getReleasePageByDomain');
+
     // domain 으로 page 조회
     const page: Page = await this.pagesRepository.findByDomain(domain);
 
@@ -81,6 +85,8 @@ export class PagesService {
   }
 
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+    this.logger.log('getAllPagesByUserId');
+
     const pageList: Page[] = await this.pagesRepository.findAllByUser(user);
 
     try {
@@ -98,18 +104,19 @@ export class PagesService {
   }
 
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    try {
-      const page: Page = await this.pagesRepository.findById(id);
-      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
+    this.logger.log('getPageByPageId');
 
-      return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    const page: Page = await this.pagesRepository.findById(id);
+
+    if (!page) throw new NotFoundException('page not found');
+
+    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
   }
 
   async editPage(id: number, requestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
-    this.logger.log('start editPage');
+    this.logger.log('editPage');
+    this.logger.log(requestDto);
 
     // page 조회
     const editPage: Page = await this.pagesRepository.findById(id);
@@ -135,6 +142,8 @@ export class PagesService {
   }
 
   async refreshPage(id: number, content: string): Promise<ResponseEntity<PagesResponseDto>> {
+    this.logger.log('refreshPage');
+
     // 대상 page 조회
     const targetPage: Page = await this.pagesRepository.findById(id);
     // scrapping data backup 및 content 업데이트
@@ -157,12 +166,15 @@ export class PagesService {
   }
 
   async deletePage(id: number): Promise<ResponseEntity<string>> {
+    this.logger.log('deletePage');
+
     await this.pagesRepository.deleteById(id);
 
     return ResponseEntity.OK('페이지 삭제 완료');
   }
 
   async checkDomain(domain: string): Promise<void> {
+    this.logger.log('checkDomain');
     const page: Page = await this.pagesRepository.findByDomain(domain);
 
     if (page) {
