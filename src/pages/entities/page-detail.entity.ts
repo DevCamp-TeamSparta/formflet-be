@@ -30,4 +30,8 @@ export class PageDetail {
   constructor(content: string) {
     this.content = content;
   }
+
+  update(content: string): void {
+    this.content = content;
+  }
 }

@@ -23,7 +23,8 @@ export class PagesDetailService {
     this.logger.log('start updatePageDetail');
 
     const pageDetail: PageDetail = await this.repository.findByPage(page);
-    pageDetail.content = content;
+
+    pageDetail.update(content);
 
     await this.repository.save(pageDetail);
 
