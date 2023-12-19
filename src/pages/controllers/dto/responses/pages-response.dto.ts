@@ -2,8 +2,8 @@ import { PageDetail } from '../../../entities/page-detail.entity';
 import { PageFont } from '../../../entities/page-font.entity';
 import { Form } from '../../../../forms/entities/forms.entity';
 import { Cta } from '../../../../ctas/entities/cta.entity';
-import { Page } from "../../../entities/page.entity";
-import { Builder } from "builder-pattern";
+import { Page } from '../../../entities/page.entity';
+import { Builder } from 'builder-pattern';
 
 export class PagesResponseDto {
   readonly id: number;
