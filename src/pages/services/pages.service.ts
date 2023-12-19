@@ -70,7 +70,7 @@ export class PagesService {
 
   async getReleasePageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
     // domain 으로 page 조회
-    const page: Page = await this.pagesRepository.findOneBy({ domain });
+    const page: Page = await this.pagesRepository.findByDomain(domain);
 
     try {
       const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
@@ -81,7 +81,7 @@ export class PagesService {
   }
 
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
-    const pageList: Page[] = await this.pagesRepository.findBy({ user: { id: user.id } });
+    const pageList: Page[] = await this.pagesRepository.findAllByUser(user);
 
     try {
       const responseDtoList: PagesResponseDto[] = [];
@@ -99,7 +99,7 @@ export class PagesService {
 
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     try {
-      const page: Page = await this.pagesRepository.findOneBy({ id });
+      const page: Page = await this.pagesRepository.findById(id);
       const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
 
       return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
@@ -112,7 +112,7 @@ export class PagesService {
     this.logger.log('start editPage');
 
     // page 조회
-    const editPage: Page = await this.pagesRepository.findOneBy({ id });
+    const editPage: Page = await this.pagesRepository.findById(id);
 
     // font update
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
@@ -127,7 +127,7 @@ export class PagesService {
     await this.ctasService.updateCta(editPage, requestDto.cta);
 
     // 결과 조회
-    const resultPage: Page = await this.pagesRepository.findOneBy({ id });
+    const resultPage: Page = await this.pagesRepository.findById(id);
 
     // 응답 생성 및 return
     const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage);
@@ -136,7 +136,7 @@ export class PagesService {
 
   async refreshPage(id: number, content: string): Promise<ResponseEntity<PagesResponseDto>> {
     // 대상 page 조회
-    const targetPage: Page = await this.pagesRepository.findOneBy({ id });
+    const targetPage: Page = await this.pagesRepository.findById(id);
     // scrapping data backup 및 content 업데이트
     await this.pagesBackupService.updatePageBackup(targetPage, content);
     await this.pagesContentService.updatePageDetail(targetPage, content);
@@ -149,7 +149,7 @@ export class PagesService {
     await this.ctasService.deleteCtaByPageId(targetPage);
 
     // 적용된 page 조회 후 응답생성
-    const reflectionPage: Page = await this.pagesRepository.findOneBy({ id });
+    const reflectionPage: Page = await this.pagesRepository.findById(id);
     const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(reflectionPage);
 
     // return
@@ -157,13 +157,13 @@ export class PagesService {
   }
 
   async deletePage(id: number): Promise<ResponseEntity<string>> {
-    await this.pagesRepository.delete({ id });
+    await this.pagesRepository.deleteById(id);
 
     return ResponseEntity.OK('페이지 삭제 완료');
   }
 
   async checkDomain(domain: string): Promise<void> {
-    const page: Page = await this.pagesRepository.findOneBy({ domain });
+    const page: Page = await this.pagesRepository.findByDomain(domain);
 
     if (page) {
       throw new ConflictException('이미 존재하는 도메인 입니다.');
