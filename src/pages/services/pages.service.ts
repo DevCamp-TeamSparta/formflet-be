@@ -21,7 +21,6 @@ import { FormsDetailService } from '../../forms/services/forms-detail.service';
 import { FormsReplyService } from '../../forms/services/forms-reply.service';
 import { Form } from '../../forms/entities/forms.entity';
 import { CtasService } from '../../ctas/services/ctas.service';
-import { Cta } from '../../ctas/entities/cta.entity';
 
 @Injectable()
 export class PagesService {
@@ -129,28 +128,17 @@ export class PagesService {
     // page 조회
     const editPage: Page = await this.pagesRepository.findOneBy({ id });
 
-    // form 및 cta 조회
-    const form: Form = await this.formsService.getFormByPage(editPage);
-    const cta: Cta = await this.ctasService.getCtaByPageId(editPage);
-
-    // font 반영
+    // font update
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
 
-    // form 존재할 경우 업데이트 없으면 생성
-    if (form) {
-      await this.formsService.updateForm(editPage, requestDto.form);
-      await this.formsDetailService.updateFormDetail(form, requestDto.form.guide);
-    } else {
-      const form: Form = await this.formsService.createForm(editPage, requestDto.form);
-      await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
-    }
+    // form 및 formDetail update
+    await this.formsService.updateForm(editPage, requestDto.form);
 
-    // cta 존재할 경우 업데이트 없으면 생성
-    if (cta) {
-      await this.ctasService.updateCta(editPage, requestDto.cta);
-    } else {
-      await this.ctasService.createCta(editPage, requestDto.cta);
-    }
+    const form: Form = await this.formsService.getFormByPage(editPage);
+    await this.formsDetailService.createFormDetail(form, requestDto.form.guide);
+
+    // cta update
+    await this.ctasService.updateCta(editPage, requestDto.cta);
 
     // 결과 조회
     const resultPage: Page = await this.pagesRepository.findOneBy({ id });
