@@ -83,7 +83,7 @@ export class PagesService {
       const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(page.form, formReplyStatus);
 
       // pageResponse 생성
-      const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPagesResponseDto(page, formsResponseDto);
+      const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPageResponseDto(page, formsResponseDto);
 
       return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', pagesResponseDto);
     } catch (e) {
@@ -125,7 +125,7 @@ export class PagesService {
     const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(page.form, formReplyStatus);
 
     // pageResponse 생성
-    const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPagesResponseDto(page, formsResponseDto);
+    const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPageResponseDto(page, formsResponseDto);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', pagesResponseDto);
   }
@@ -206,7 +206,7 @@ export class PagesService {
     const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(resultPage.form, formReplyStatus);
 
     // pageResponse 생성
-    const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPagesResponseDto(resultPage, formsResponseDto);
+    const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPageResponseDto(resultPage, formsResponseDto);
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', pagesResponseDto);
   }
@@ -237,6 +237,6 @@ export class PagesService {
     const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(page.form, formReplyStatus);
 
     // pageResponse 생성
-    return this.pagesUtils.buildPagesResponseDto(page, formsResponseDto);
+    return this.pagesUtils.buildPageResponseDto(page, formsResponseDto);
   }
 }
