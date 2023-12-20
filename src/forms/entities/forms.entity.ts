@@ -7,15 +7,18 @@ export class Form {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Page, (page) => page.form, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Page, (page) => page.forms, { onDelete: 'CASCADE' })
   @JoinColumn()
   page: Page;
 
   @Column()
-  title: string;
+  pageConnect: boolean;
 
   @Column()
   status: boolean;
+
+  @Column()
+  title: string;
 
   @Column()
   guide: string;
