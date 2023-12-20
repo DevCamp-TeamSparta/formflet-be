@@ -51,7 +51,7 @@ export class Page {
     cascade: true,
     eager: true,
   })
-  form: Form;
+  forms: Form[];
 
   @OneToOne(() => Cta, (cta) => cta.page, {
     cascade: true,
