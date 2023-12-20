@@ -29,10 +29,11 @@ export class Form {
   })
   formDetail: FormDetail[];
 
-  constructor(page: Page, title: string, status: boolean, guide: string) {
+  constructor(page: Page, pageConnect: boolean, status: boolean, title: string, guide: string) {
     this.page = page;
-    this.title = title;
+    this.pageConnect = pageConnect;
     this.status = status;
+    this.title = title;
     this.guide = guide;
   }
 }
