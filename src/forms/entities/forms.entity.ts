@@ -12,6 +12,9 @@ export class Form {
   page: Page;
 
   @Column()
+  title: string;
+
+  @Column()
   status: boolean;
 
   @Column()
@@ -23,8 +26,9 @@ export class Form {
   })
   formDetail: FormDetail[];
 
-  constructor(page: Page, status: boolean, guide: string) {
+  constructor(page: Page, title: string, status: boolean, guide: string) {
     this.page = page;
+    this.title = title;
     this.status = status;
     this.guide = guide;
   }
