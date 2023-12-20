@@ -14,7 +14,8 @@ export class FormsService {
   async createForm(page: Page): Promise<Form> {
     const form: Form = Builder<Form>()
       .page(page)
-      .status(true)
+      .pageConnect(true)
+      .status(false)
       .title('제목을 입력해주세요.')
       .guide(
         '[제목] 제목을 입력해주세요.\n' +
