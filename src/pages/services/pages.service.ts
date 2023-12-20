@@ -80,7 +80,7 @@ export class PagesService {
       const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.form.formDetail);
 
       // formReply 작성여부 포함하여 response 생성
-      const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(page.form, formReplyStatus);
+      const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(page.form, formReplyStatus);
 
       // pageResponse 생성
       const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPagesResponseDto(page, formsResponseDto);
@@ -122,7 +122,7 @@ export class PagesService {
     const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.form.formDetail);
 
     // formReply 작성여부 포함하여 response 생성
-    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(page.form, formReplyStatus);
+    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(page.form, formReplyStatus);
 
     // pageResponse 생성
     const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPagesResponseDto(page, formsResponseDto);
@@ -203,7 +203,7 @@ export class PagesService {
     const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(resultPage.form.formDetail);
 
     // formReply 작성여부 포함하여 response 생성
-    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(resultPage.form, formReplyStatus);
+    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(resultPage.form, formReplyStatus);
 
     // pageResponse 생성
     const pagesResponseDto: PagesResponseDto = this.pagesUtils.buildPagesResponseDto(resultPage, formsResponseDto);
@@ -234,7 +234,7 @@ export class PagesService {
     const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.form.formDetail);
 
     // formReply 작성여부 포함하여 response 생성
-    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(page.form, formReplyStatus);
+    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormResponseDto(page.form, formReplyStatus);
 
     // pageResponse 생성
     return this.pagesUtils.buildPagesResponseDto(page, formsResponseDto);
