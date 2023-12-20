@@ -39,7 +39,8 @@ export class FormsService {
 
     const form: Form = await this.getFormByPage(page);
 
-    form.update(requestDto);
+    form.status = requestDto.status;
+    form.guide = requestDto.guide;
 
     await this.repository.save(form);
   }
