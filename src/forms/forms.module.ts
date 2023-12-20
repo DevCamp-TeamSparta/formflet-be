@@ -12,6 +12,7 @@ import { FormsDetailService } from './services/forms-detail.service';
 import { FormsDetailRepository } from './repositories/forms-detail.repository';
 import { FormsReplyService } from './services/forms-reply.service';
 import { FormsReplyRepository } from './repositories/forms-reply.repository';
+import { FormsUtils } from './utils/forms.utils';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { FormsReplyRepository } from './repositories/forms-reply.repository';
     FormsDetailRepository,
     FormsReplyService,
     FormsReplyRepository,
+    FormsUtils,
   ],
-  exports: [FormsService, FormsDetailService, FormsReplyService],
+  exports: [FormsService, FormsDetailService, FormsReplyService, FormsUtils],
 })
 export class FormsModule {}

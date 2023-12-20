@@ -1,9 +1,9 @@
 import { PageDetail } from '../../../entities/page-detail.entity';
 import { PageFont } from '../../../entities/page-font.entity';
-import { Form } from '../../../../forms/entities/forms.entity';
 import { Cta } from '../../../../ctas/entities/cta.entity';
 import { Page } from '../../../entities/page.entity';
 import { Builder } from 'builder-pattern';
+import { FormsResponseDto } from '../../../../forms/controllers/dtos/responses/forms-response.dto';
 
 export class PagesResponseDto {
   readonly id: number;
@@ -12,7 +12,7 @@ export class PagesResponseDto {
   readonly url: string;
   readonly pageDetail: PageDetail;
   readonly pageFont: PageFont;
-  readonly form: Form;
+  readonly form: FormsResponseDto;
   readonly cta: Cta;
 
   constructor(
@@ -22,7 +22,7 @@ export class PagesResponseDto {
     url: string,
     pageDetail: PageDetail,
     pageFont: PageFont,
-    form: Form,
+    form: FormsResponseDto,
     cta: Cta,
   ) {
     this.id = id;
@@ -35,7 +35,7 @@ export class PagesResponseDto {
     this.cta = cta;
   }
 
-  buildResponseDto(page: Page): PagesResponseDto {
+  buildResponseDto(page: Page, responseDto: FormsResponseDto): PagesResponseDto {
     return Builder<PagesResponseDto>()
       .id(page.id)
       .title(page.title)
@@ -48,7 +48,7 @@ export class PagesResponseDto {
         },
       )
       .pageFont(page.pageFont)
-      .form(page.form)
+      .form(responseDto)
       .cta(page.cta)
       .build();
   }
