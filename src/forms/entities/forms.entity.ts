@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Page } from '../../pages/entities/page.entity';
 import { FormDetail } from './forms-detail.entity';
 
@@ -7,7 +7,7 @@ export class Form {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Page, (page) => page.form, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Page, (page) => page.form, { onDelete: 'CASCADE' })
   @JoinColumn()
   page: Page;
 

@@ -31,6 +31,22 @@ export class FormsService {
     return await this.repository.save(form);
   }
 
+  async chageForm() {}
+
+  async createDifferentForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
+    // form 제목 설정을 위한 조회
+    const formArray: Form[] = await this.getAllFormByPage(page);
+
+    const form: Form = Builder<Form>()
+      .page(page)
+      .status(requestDto.status)
+      .title(`${this.getTitleByGuide(page.form.guide)} ${formArray.length + 1}`)
+      .guide(requestDto.guide)
+      .build();
+
+    return await this.repository.save(form);
+  }
+
   async getFormByPage(page: Page): Promise<Form> {
     return await this.repository.findByPage(page);
   }
@@ -45,26 +61,32 @@ export class FormsService {
     return await this.repository.findAllByPage(page);
   }
 
-  async updateForm(page: Page, requestDto: FormsRequestDto) {
+  async updateForm(page: Page, requestDto: FormsRequestDto): Promise<void> {
     this.logger.log('updateForm');
 
     const form: Form = await this.getFormByPage(page);
 
-    const formArray: Form[] = await this.getAllFormByPage(page);
-
-    form.title = `${this.getTitleByGuide(page.form.guide)} ${formArray.length + 1}`;
     form.status = requestDto.status;
     form.guide = requestDto.guide;
 
     await this.repository.save(form);
   }
 
-  async deleteAllFormByPageId(page: Page) {
+  async updateFormStatus(page: Page): Promise<void> {
+    this.logger.log('updateForm');
+
+    const form: Form = await this.getFormByPage(page);
+
+    form.status = false;
+
+    await this.repository.save(form);
+  }
+
+  async deleteAllFormByPageId(page: Page): Promise<void> {
     await this.repository.delete({ page: { id: page.id } });
   }
 
   getTitleByGuide(guide: string): string {
-    // 정규식
     const titleRegex = /\[제목\] (.*?)\n/g;
 
     return titleRegex.exec(guide)[1];

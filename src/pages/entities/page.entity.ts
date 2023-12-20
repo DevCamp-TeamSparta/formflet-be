@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -46,7 +47,7 @@ export class Page {
   })
   pageFont: PageFont;
 
-  @OneToOne(() => Form, (form) => form.page, {
+  @OneToMany(() => Form, (form) => form.page, {
     cascade: true,
     eager: true,
   })

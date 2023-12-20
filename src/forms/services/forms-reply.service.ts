@@ -33,12 +33,14 @@ export class FormsReplyService {
     return ResponseEntity.OK('답변 작성 완료');
   }
 
-  async getFormReplyStatus(formDetail: FormDetail): Promise<boolean> {
+  async getFormReplyStatus(formDetailArray: FormDetail[]): Promise<boolean> {
     // formDetail 확인
-    if (!formDetail) return false;
+    if (!formDetailArray || formDetailArray.length === 0) {
+      return false;
+    }
 
     // formReply 조회
-    const formReply: FormReply = await this.formsReplyRepository.findByFormDetail(formDetail);
+    const formReply: FormReply = await this.formsReplyRepository.findByFormDetail(formDetailArray[0]);
 
     // 결과 값 return
     return !!formReply;
