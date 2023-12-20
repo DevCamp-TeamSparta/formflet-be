@@ -14,6 +14,8 @@ import { FormsDetailService } from '../../forms/services/forms-detail.service';
 import { FormsReplyService } from '../../forms/services/forms-reply.service';
 import { Form } from '../../forms/entities/forms.entity';
 import { CtasService } from '../../ctas/services/ctas.service';
+import { FormsUtils } from '../../forms/utils/forms.utils';
+import { FormsResponseDto } from '../../forms/controllers/dtos/responses/forms-response.dto';
 
 @Injectable()
 export class PagesService {
@@ -26,14 +28,15 @@ export class PagesService {
     private readonly pagesResponseDto: PagesResponseDto,
     private readonly formsService: FormsService,
     private readonly formsDetailService: FormsDetailService,
-    private readonly formsResponseService: FormsReplyService,
+    private readonly formsReplyService: FormsReplyService,
+    private readonly formsUtils: FormsUtils,
     private readonly ctasService: CtasService,
   ) {}
 
   async registerPage(user: User, requestDto: PagesRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('registerPage');
 
-    // domain 중복 검사
+    // domain 검사
     await this.checkDomain(requestDto.domain);
 
     // page 생성
@@ -60,7 +63,7 @@ export class PagesService {
     await this.ctasService.createCta(page);
 
     // response 생성
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
+    const responseDto: PagesResponseDto = Builder<PagesResponseDto>().id(page.id).build();
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
   }
@@ -72,8 +75,16 @@ export class PagesService {
     const page: Page = await this.pagesRepository.findByDomain(domain);
 
     try {
-      const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
-      return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', responseDto);
+      // form reply 작성여부 확인
+      const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.form.formDetail[0]);
+
+      // formReply 작성여부 포함하여 response 생성
+      const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(page.form, formReplyStatus);
+
+      // pageResponse 생성
+      const pagesResponseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page, formsResponseDto);
+
+      return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', pagesResponseDto);
     } catch (e) {
       throw new NotFoundException('존재하지 않는 도메인');
     }
@@ -88,8 +99,16 @@ export class PagesService {
       const responseDtoList: PagesResponseDto[] = [];
 
       for (const page of pageList) {
-        const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
-        responseDtoList.push(responseDto);
+        // form reply 작성여부 확인
+        const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.form.formDetail[0]);
+
+        // formReply 작성여부 포함하여 response 생성
+        const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(page.form, formReplyStatus);
+
+        // pageResponse 생성
+        const pagesResponseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page, formsResponseDto);
+
+        responseDtoList.push(pagesResponseDto);
       }
 
       return ResponseEntity.OK_WITH_DATA('나의 웹페이지 전체조회', responseDtoList);
@@ -105,8 +124,16 @@ export class PagesService {
 
     if (!page) throw new NotFoundException('page not found');
 
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page);
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', responseDto);
+    // form reply 작성여부 확인
+    const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.form.formDetail[0]);
+
+    // formReply 작성여부 포함하여 response 생성
+    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(page.form, formReplyStatus);
+
+    // pageResponse 생성
+    const pagesResponseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(page, formsResponseDto);
+
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', pagesResponseDto);
   }
 
   async editPage(id: number, requestDto: PagesEditRequestDto): Promise<ResponseEntity<PagesResponseDto>> {
@@ -122,6 +149,7 @@ export class PagesService {
     await this.formsService.updateForm(editPage, requestDto.form);
 
     const form: Form = await this.formsService.getFormByPage(editPage);
+
     await this.formsDetailService.editFormDetail(form, requestDto.form.guide);
 
     // cta update
@@ -130,9 +158,16 @@ export class PagesService {
     // 결과 조회
     const resultPage: Page = await this.pagesRepository.findById(id);
 
-    // 응답 생성 및 return
-    const responseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage);
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', responseDto);
+    // form reply 작성여부 확인
+    const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(resultPage.form.formDetail[0]);
+
+    // formReply 작성여부 포함하여 response 생성
+    const formsResponseDto: FormsResponseDto = this.formsUtils.buildFormsResponseDto(resultPage.form, formReplyStatus);
+
+    // pageResponse 생성
+    const pagesResponseDto: PagesResponseDto = this.pagesResponseDto.buildResponseDto(resultPage, formsResponseDto);
+
+    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', pagesResponseDto);
   }
 
   async deletePage(id: number): Promise<ResponseEntity<string>> {
@@ -145,6 +180,7 @@ export class PagesService {
 
   async checkDomain(domain: string): Promise<void> {
     this.logger.log('checkDomain');
+
     const page: Page = await this.pagesRepository.findByDomain(domain);
 
     if (page) {
