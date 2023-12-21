@@ -2,7 +2,7 @@ import { FormDetail } from '../../../entities/forms-detail.entity';
 
 export class FormsResponseDto {
   id: number;
-  pageConnect: boolean;
+  isConnection: boolean;
   status: boolean;
   replyStatus: boolean;
   title: string;
@@ -11,7 +11,7 @@ export class FormsResponseDto {
 
   constructor(
     id: number,
-    pageConnect: boolean,
+    isConnection: boolean,
     status: boolean,
     replyStatus: boolean,
     title: string,
@@ -19,7 +19,7 @@ export class FormsResponseDto {
     formDetails: FormDetail[],
   ) {
     this.id = id;
-    this.pageConnect = pageConnect;
+    this.isConnection = isConnection;
     this.status = status;
     this.replyStatus = replyStatus;
     this.title = title;

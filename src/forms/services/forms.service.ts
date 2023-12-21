@@ -4,6 +4,8 @@ import { Page } from '../../pages/entities/page.entity';
 import { Form } from '../entities/forms.entity';
 import { Builder } from 'builder-pattern';
 import { FormsRequestDto } from '../controllers/dtos/reqeusts/forms-request.dto';
+import { ResponseEntity } from '../../configs/response-entity';
+import { FormsResponseDto } from '../controllers/dtos/responses/forms-response.dto';
 
 @Injectable()
 export class FormsService {
@@ -14,7 +16,7 @@ export class FormsService {
   async createDefaultForm(page: Page): Promise<Form> {
     const form: Form = Builder<Form>()
       .page(page)
-      .pageConnect(true)
+      .isConnection(true)
       .status(false)
       .title('제목을 입력해주세요.')
       .guide(
@@ -35,7 +37,7 @@ export class FormsService {
   async createDifferentForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
     const form: Form = Builder<Form>()
       .page(page)
-      .pageConnect(true)
+      .isConnection(true)
       .status(requestDto.status)
       .title(this.getTitleFromGuide(requestDto.guide))
       .guide(requestDto.guide)
@@ -44,19 +46,26 @@ export class FormsService {
     return await this.repository.save(form);
   }
 
-  /*  async createDifferentForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
-    // form 제목 설정을 위한 조회
-    const formArray: Form[] = await this.getAllFormByPage(page);
+  async getAllFormsByPageId(pageId: number): Promise<ResponseEntity<FormsResponseDto[]>> {
+    const forms: Form[] = await this.repository.findAllByPageId(pageId);
 
-    const form: Form = Builder<Form>()
-      .page(page)
-      .status(requestDto.status)
-      .title(`${this.getTitleByGuide(page.form.guide)} ${formArray.length + 1}`)
-      .guide(requestDto.guide)
-      .build();
+    const formsResponseDtos: FormsResponseDto[] = [];
 
-    return await this.repository.save(form);
-  }*/
+    for (const form of forms) {
+      const formsResponseDto: FormsResponseDto = Builder<FormsResponseDto>()
+        .id(form.id)
+        .isConnection(form.isConnection)
+        .status(form.status)
+        .title(form.title)
+        .guide(form.guide)
+        .formDetails(form.formDetail)
+        .build();
+
+      formsResponseDtos.push(formsResponseDto);
+    }
+
+    return ResponseEntity.OK_WITH_DATA('폼 전체조회', formsResponseDtos);
+  }
 
   async getFormByPage(page: Page): Promise<Form> {
     return await this.repository.findByPage(page);
@@ -66,10 +75,6 @@ export class FormsService {
     this.logger.log('getFormById');
 
     return await this.repository.findById(id);
-  }
-
-  async getAllFormsByPage(page: Page): Promise<Form[]> {
-    return await this.repository.findAllByPage(page);
   }
 
   async updateForm(page: Page, requestDto: FormsRequestDto): Promise<void> {
@@ -88,7 +93,7 @@ export class FormsService {
 
     const form: Form = await this.getFormByPage(page);
 
-    form.pageConnect = false;
+    form.isConnection = false;
 
     return await this.repository.save(form);
   }

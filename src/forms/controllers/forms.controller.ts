@@ -1,12 +1,26 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { ResponseEntity } from '../../configs/response-entity';
 import { FormsReplyService } from '../services/forms-reply.service';
 import { FormsReplyRequestDto } from './dtos/reqeusts/forms-reply-request.dto';
+import { FormsResponseDto } from './dtos/responses/forms-response.dto';
+import { FormsService } from '../services/forms.service';
 
 @Controller('api/forms')
 export class FormsController {
-  constructor(private readonly service: FormsReplyService) {}
+  constructor(
+    private readonly formsService: FormsService,
+    private readonly formsReplyService: FormsReplyService,
+  ) {}
+
+  @Get('/:pageId')
+  @ApiOperation({
+    summary: '폼 전체조회 API',
+    description: '폼 전체조회 API',
+  })
+  async getAllFormsByPageId(@Param('pageId') pageId: number): Promise<ResponseEntity<FormsResponseDto[]>> {
+    return this.formsService.getAllFormsByPageId(pageId);
+  }
 
   @Post('/reply/:id')
   @ApiOperation({
@@ -17,6 +31,6 @@ export class FormsController {
     @Param('id') id: number,
     @Body() requestDto: FormsReplyRequestDto,
   ): Promise<ResponseEntity<string>> {
-    return this.service.createFormReply(id, requestDto);
+    return this.formsReplyService.createFormReply(id, requestDto);
   }
 }

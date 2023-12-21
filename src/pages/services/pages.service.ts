@@ -66,7 +66,7 @@ export class PagesService {
     // response 생성
     const responseDto: PagesResponseDto = Builder<PagesResponseDto>().id(page.id).build();
 
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 등록', responseDto);
+    return ResponseEntity.OK_WITH_DATA('웹페이지 등록', responseDto);
   }
 
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
@@ -80,13 +80,13 @@ export class PagesService {
       const responseDto: PagesResponseDto = Builder<PagesResponseDto>()
         .id(page.id)
         .title(page.title)
-        .domain(page.domain)
+        .domain(`${page.domain}.${process.env.DOMAIN}`)
         .build();
 
       responseDtos.push(responseDto);
     }
 
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 전체조회', responseDtos);
+    return ResponseEntity.OK_WITH_DATA('웹페이지 전체조회', responseDtos);
   }
 
   async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
@@ -98,7 +98,7 @@ export class PagesService {
 
     const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(page);
 
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 id로 조회', pagesResponseDto);
+    return ResponseEntity.OK_WITH_DATA('웹페이지 id로 조회', pagesResponseDto);
   }
 
   async getPageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
@@ -124,8 +124,6 @@ export class PagesService {
     if (!editPage) {
       throw new NotFoundException('page not found');
     }
-
-    //await this.
 
     // font update
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
@@ -161,7 +159,7 @@ export class PagesService {
 
     const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(resultPage);
 
-    return ResponseEntity.OK_WITH_DATA('나의 웹페이지 편집', pagesResponseDto);
+    return ResponseEntity.OK_WITH_DATA('웹페이지 편집', pagesResponseDto);
   }
 
   async deletePage(id: number): Promise<ResponseEntity<string>> {

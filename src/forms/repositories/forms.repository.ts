@@ -16,10 +16,10 @@ export class FormsRepository extends Repository<Form> {
   }
 
   async findByPage(page: Page): Promise<Form> {
-    return await this.repository.findOneBy({ page: { id: page.id }, pageConnect: true });
+    return await this.repository.findOneBy({ page: { id: page.id }, isConnection: true });
   }
 
-  async findAllByPage(page: Page): Promise<Form[]> {
-    return await this.repository.findBy({ page: { id: page.id } });
+  async findAllByPageId(id: number): Promise<Form[]> {
+    return await this.repository.findBy({ page: { id } });
   }
 }
