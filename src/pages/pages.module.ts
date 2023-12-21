@@ -14,7 +14,7 @@ import { PagesDetailService } from './services/pages-detail.service';
 import { PagesDetailRepository } from './repositories/pages-detail.repository';
 import { FormsModule } from '../forms/forms.module';
 import { CtasModule } from '../ctas/ctas.module';
-import { PagesResponseDto } from './controllers/dto/responses/pages-response.dto';
+import { PagesUtils } from './utils/pages.utils';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { PagesResponseDto } from './controllers/dto/responses/pages-response.dto
     PagesDetailRepository,
     PagesFontService,
     PagesFontRepository,
-    PagesResponseDto,
+    PagesUtils,
   ],
 })
 export class PagesModule {}

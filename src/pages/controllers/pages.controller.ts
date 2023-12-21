@@ -6,8 +6,8 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { PagesEditRequestDto } from './dto/requests/pages-edit-request.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { PagesEditRequestDto } from './dto/requests/pages-edit-request.dto';
 
 @Controller('api/pages')
 export class PagesController {
@@ -24,15 +24,6 @@ export class PagesController {
     @Body() requestDto: PagesRequestDto,
   ): Promise<ResponseEntity<PagesResponseDto>> {
     return this.service.registerPage(user, requestDto);
-  }
-
-  @Get('release/:domain')
-  @ApiOperation({
-    summary: '배포 페이지 조회 API',
-    description: '배포 페이지 조회 API',
-  })
-  async getReleasePageByDomain(@Param('domain') domain: string): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.service.getReleasePageByDomain(domain);
   }
 
   @Get()
@@ -53,6 +44,15 @@ export class PagesController {
   })
   async getPageByPageId(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
     return this.service.getPageByPageId(id);
+  }
+
+  @Get('release/:domain')
+  @ApiOperation({
+    summary: '배포 페이지 조회 API',
+    description: '배포 페이지 조회 API',
+  })
+  async getPageByDomain(@Param('domain') domain: string): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.service.getPageByDomain(domain);
   }
 
   @Patch('edit/:id')

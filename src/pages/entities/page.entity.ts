@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -19,7 +20,7 @@ export class Page {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.page, {
+  @ManyToOne(() => User, (user) => user.pages, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
@@ -46,11 +47,11 @@ export class Page {
   })
   pageFont: PageFont;
 
-  @OneToOne(() => Form, (form) => form.page, {
+  @OneToMany(() => Form, (form) => form.page, {
     cascade: true,
     eager: true,
   })
-  form: Form;
+  forms: Form[];
 
   @OneToOne(() => Cta, (cta) => cta.page, {
     cascade: true,

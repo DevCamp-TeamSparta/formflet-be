@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Page } from '../../pages/entities/page.entity';
 import { FormDetail } from './forms-detail.entity';
 
@@ -7,12 +7,18 @@ export class Form {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Page, (page) => page.form, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Page, (page) => page.forms, { onDelete: 'CASCADE' })
   @JoinColumn()
   page: Page;
 
   @Column()
+  pageConnect: boolean;
+
+  @Column()
   status: boolean;
+
+  @Column()
+  title: string;
 
   @Column()
   guide: string;
@@ -23,9 +29,11 @@ export class Form {
   })
   formDetail: FormDetail[];
 
-  constructor(page: Page, status: boolean, guide: string) {
+  constructor(page: Page, pageConnect: boolean, status: boolean, title: string, guide: string) {
     this.page = page;
+    this.pageConnect = pageConnect;
     this.status = status;
+    this.title = title;
     this.guide = guide;
   }
 }
