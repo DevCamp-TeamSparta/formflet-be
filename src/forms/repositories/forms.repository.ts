@@ -16,7 +16,7 @@ export class FormsRepository extends Repository<Form> {
   }
 
   async findByPage(page: Page): Promise<Form> {
-    return await this.repository.findOneBy({ page: { id: page.id } });
+    return await this.repository.findOneBy({ page: { id: page.id }, pageConnect: true });
   }
 
   async findAllByPage(page: Page): Promise<Form[]> {

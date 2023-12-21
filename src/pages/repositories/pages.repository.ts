@@ -11,19 +11,34 @@ export class PagesRepository extends Repository<Page> {
     super(repository.target, repository.manager, repository.queryRunner);
   }
 
-  async findByDomain(domain: string): Promise<Page> {
-    return await this.repository.findOneBy({ domain });
+  async findAllByUserId(user: User): Promise<Page[]> {
+    return await this.repository.findBy({ user: { id: user.id }, forms: { pageConnect: true } });
   }
 
   async findById(id: number): Promise<Page> {
-    return await this.repository.findOneBy({ id });
+    return await this.repository.findOneBy({ id, forms: { pageConnect: true } });
   }
 
-  async findAllByUser(user: User): Promise<Page[]> {
-    return await this.repository.findBy({ user: { id: user.id } });
+  async findByDomain(domain: string): Promise<Page> {
+    return await this.repository.findOneBy({ domain, forms: { pageConnect: true } });
   }
 
   async deleteById(id: number): Promise<void> {
     await this.repository.delete({ id });
   }
+
+  /*  async test(userId: number): Promise<Page[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('page')
+      .leftJoin(PageDetail, 'pageDetail', 'page.id = pageDetail.pageId')
+      .leftJoin(PageFont, 'pageFont', 'page.id = pageFont.pageId')
+      .leftJoin(Form, 'form', 'page.id = form.pageId')
+      .leftJoin(FormDetail, 'formDetail', 'form.id = formDetail.formId')
+      .leftJoin(FormReply, 'formReply', 'formDetail.id = formReply.formDetailId')
+      .leftJoin(Cta, 'cta', 'page.id = cta.pageId')
+      .select(['page.*', 'pageDetail.*', 'pageFont.*', 'form.*', 'formDetail.*', 'formReply.*', 'cta.*'])
+      .where('page.userId = :userId', { userId });
+
+    return await queryBuilder.getRawMany();
+  }*/
 }

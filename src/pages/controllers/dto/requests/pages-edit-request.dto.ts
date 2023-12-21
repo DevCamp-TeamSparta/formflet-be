@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PagesFontRequestDto } from './pages-font-request.dto';
 import { FormsRequestDto } from '../../../../forms/controllers/dtos/reqeusts/forms-request.dto';
@@ -6,14 +6,19 @@ import { CtasRequestDto } from '../../../../ctas/controllers/dtos/requests/ctas-
 
 export class PagesEditRequestDto {
   @IsNotEmpty()
-  @ApiProperty({ description: '페이지 폰트 설정' })
+  @IsString()
+  @ApiProperty({ description: 'notion scrap 내용' })
+  content: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ description: '페이지 폰트' })
   font: PagesFontRequestDto;
 
   @IsNotEmpty()
-  @ApiProperty({ description: '폼 설정' })
+  @ApiProperty({ description: '폼' })
   form: FormsRequestDto;
 
   @IsNotEmpty()
-  @ApiProperty({ description: 'cat 설정' })
+  @ApiProperty({ description: 'cta' })
   cta: CtasRequestDto;
 }

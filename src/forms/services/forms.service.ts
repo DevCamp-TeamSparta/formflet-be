@@ -11,7 +11,7 @@ export class FormsService {
 
   constructor(private readonly repository: FormsRepository) {}
 
-  async createForm(page: Page): Promise<Form> {
+  async createDefaultForm(page: Page): Promise<Form> {
     const form: Form = Builder<Form>()
       .page(page)
       .pageConnect(true)
@@ -32,9 +32,19 @@ export class FormsService {
     return await this.repository.save(form);
   }
 
-  async chageForm() {}
-
   async createDifferentForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
+    const form: Form = Builder<Form>()
+      .page(page)
+      .pageConnect(true)
+      .status(requestDto.status)
+      .title(this.getTitleFromGuide(requestDto.guide))
+      .guide(requestDto.guide)
+      .build();
+
+    return await this.repository.save(form);
+  }
+
+  /*  async createDifferentForm(page: Page, requestDto: FormsRequestDto): Promise<Form> {
     // form 제목 설정을 위한 조회
     const formArray: Form[] = await this.getAllFormByPage(page);
 
@@ -46,7 +56,7 @@ export class FormsService {
       .build();
 
     return await this.repository.save(form);
-  }
+  }*/
 
   async getFormByPage(page: Page): Promise<Form> {
     return await this.repository.findByPage(page);
@@ -58,7 +68,7 @@ export class FormsService {
     return await this.repository.findById(id);
   }
 
-  async getAllFormByPage(page: Page): Promise<Form[]> {
+  async getAllFormsByPage(page: Page): Promise<Form[]> {
     return await this.repository.findAllByPage(page);
   }
 
@@ -73,10 +83,18 @@ export class FormsService {
     await this.repository.save(form);
   }
 
-  async updateFormStatus(page: Page): Promise<void> {
-    this.logger.log('updateForm');
+  async updatePageConnect(page: Page): Promise<Form> {
+    this.logger.log('updatePageConnect');
 
     const form: Form = await this.getFormByPage(page);
+
+    form.pageConnect = false;
+
+    return await this.repository.save(form);
+  }
+
+  async updateStatus(form: Form): Promise<void> {
+    this.logger.log('updateStatus');
 
     form.status = false;
 
@@ -87,7 +105,7 @@ export class FormsService {
     await this.repository.delete({ page: { id: page.id } });
   }
 
-  getTitleByGuide(guide: string): string {
+  getTitleFromGuide(guide: string): string {
     const titleRegex = /\[제목\] (.*?)\n/g;
 
     return titleRegex.exec(guide)[1];

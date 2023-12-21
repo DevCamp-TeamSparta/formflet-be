@@ -20,7 +20,7 @@ export class Page {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.page, {
+  @ManyToOne(() => User, (user) => user.pages, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()

@@ -1,12 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { Page } from '../../pages/entities/page.entity';
 
 @Entity()
@@ -34,7 +26,7 @@ export class User {
     cascade: true,
     eager: true,
   })
-  page: Page;
+  pages: Page[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -10,7 +10,7 @@ export class PagesResponseDto {
   readonly url: string;
   readonly pageDetail: PageDetail;
   readonly pageFont: PageFont;
-  readonly form: FormsResponseDto;
+  readonly form: FormsResponseDto[];
   readonly cta: Cta;
 
   constructor(
@@ -20,7 +20,7 @@ export class PagesResponseDto {
     url: string,
     pageDetail: PageDetail,
     pageFont: PageFont,
-    form: FormsResponseDto,
+    form: FormsResponseDto[],
     cta: Cta,
   ) {
     this.id = id;

@@ -4,7 +4,7 @@ import { Builder } from 'builder-pattern';
 import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 
 export class PagesUtils {
-  buildPageResponseDto(page: Page, responseDto: FormsResponseDto): PagesResponseDto {
+  buildPageResponseDto(page: Page, formsResponseDtos: FormsResponseDto[]): PagesResponseDto {
     return Builder<PagesResponseDto>()
       .id(page.id)
       .title(page.title)
@@ -17,7 +17,7 @@ export class PagesUtils {
         },
       )
       .pageFont(page.pageFont)
-      .form(responseDto)
+      .form(formsResponseDtos)
       .cta(page.cta)
       .build();
   }
