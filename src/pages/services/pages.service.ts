@@ -77,9 +77,13 @@ export class PagesService {
     const responseDtos: PagesResponseDto[] = [];
 
     for (const page of pages) {
-      const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(page);
+      const responseDto: PagesResponseDto = Builder<PagesResponseDto>()
+        .id(page.id)
+        .title(page.title)
+        .domain(page.domain)
+        .build();
 
-      responseDtos.push(pagesResponseDto);
+      responseDtos.push(responseDto);
     }
 
     return ResponseEntity.OK_WITH_DATA('나의 웹페이지 전체조회', responseDtos);
