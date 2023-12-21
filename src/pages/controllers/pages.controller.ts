@@ -32,7 +32,7 @@ export class PagesController {
     summary: '전체 페이지 조회 API',
     description: '전체 페이지 조회 API',
   })
-  async getAllPageByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
+  async getAllPagesByUserId(@GetUser() user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
     return this.service.getAllPagesByUserId(user);
   }
 

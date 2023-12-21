@@ -14,7 +14,7 @@ export class CtasService {
   async createCta(page: Page): Promise<Cta> {
     const cta: Cta = Builder<Cta>()
       .page(page)
-      .status(true)
+      .status(false)
       .content('')
       .link('')
       .fontSize('24px')

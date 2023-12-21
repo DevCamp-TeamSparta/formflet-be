@@ -12,15 +12,15 @@ export class PagesRepository extends Repository<Page> {
   }
 
   async findAllByUserId(user: User): Promise<Page[]> {
-    return await this.repository.findBy({ user: { id: user.id }, forms: { pageConnect: true } });
+    return await this.repository.findBy({ user: { id: user.id }, forms: { isConnection: true } });
   }
 
   async findById(id: number): Promise<Page> {
-    return await this.repository.findOneBy({ id, forms: { pageConnect: true } });
+    return await this.repository.findOneBy({ id, forms: { isConnection: true } });
   }
 
   async findByDomain(domain: string): Promise<Page> {
-    return await this.repository.findOneBy({ domain, forms: { pageConnect: true } });
+    return await this.repository.findOneBy({ domain, forms: { isConnection: true } });
   }
 
   async deleteById(id: number): Promise<void> {

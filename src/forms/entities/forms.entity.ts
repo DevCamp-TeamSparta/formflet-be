@@ -11,8 +11,8 @@ export class Form {
   @JoinColumn()
   page: Page;
 
-  @Column()
-  pageConnect: boolean;
+  @Column({ name: 'IS_CONNECTION' })
+  isConnection: boolean;
 
   @Column()
   status: boolean;
@@ -29,9 +29,9 @@ export class Form {
   })
   formDetail: FormDetail[];
 
-  constructor(page: Page, pageConnect: boolean, status: boolean, title: string, guide: string) {
+  constructor(page: Page, isConnection: boolean, status: boolean, title: string, guide: string) {
     this.page = page;
-    this.pageConnect = pageConnect;
+    this.isConnection = isConnection;
     this.status = status;
     this.title = title;
     this.guide = guide;
