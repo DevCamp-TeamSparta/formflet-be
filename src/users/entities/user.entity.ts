@@ -22,15 +22,15 @@ export class User {
   @Column()
   job: string;
 
-  @OneToMany(() => Page, (page) => page.user, {
-    cascade: true,
-    eager: true,
-  })
-  pages: Page[];
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Page, (page) => page.user, {
+    cascade: true,
+    eager: true,
+  })
+  pages: Page[];
 }
