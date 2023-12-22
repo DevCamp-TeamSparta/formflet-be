@@ -29,10 +29,6 @@ export class PageFont {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  constructor(type: string) {
-    this.type = type;
-  }
-
   update(type: string): void {
     this.type = type;
   }

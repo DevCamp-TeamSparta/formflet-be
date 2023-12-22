@@ -45,24 +45,6 @@ export class Cta {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  constructor(
-    page: Page,
-    status: boolean,
-    content: string,
-    link: string,
-    fontSize: string,
-    fontColor: string,
-    backgroundColor: string,
-  ) {
-    this.page = page;
-    this.status = status;
-    this.content = content;
-    this.link = link;
-    this.fontSize = fontSize;
-    this.fontColor = fontColor;
-    this.backgroundColor = backgroundColor;
-  }
-
   update(requestDto: CtasRequestDto): void {
     this.status = requestDto.status;
     this.content = requestDto.content;

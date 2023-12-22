@@ -43,12 +43,4 @@ export class Form {
     eager: true,
   })
   formDetail: FormDetail[];
-
-  constructor(page: Page, isConnection: boolean, status: boolean, title: string, guide: string) {
-    this.page = page;
-    this.isConnection = isConnection;
-    this.status = status;
-    this.title = title;
-    this.guide = guide;
-  }
 }
