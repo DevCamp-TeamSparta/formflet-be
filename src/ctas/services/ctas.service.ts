@@ -15,7 +15,7 @@ export class CtasService {
     const cta: Cta = Builder<Cta>()
       .page(page)
       .status(false)
-      .content('')
+      .content('Click me!')
       .link('')
       .fontSize('24px')
       .fontColor('#FFFFFF')
