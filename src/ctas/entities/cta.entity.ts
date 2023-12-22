@@ -1,4 +1,12 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Page } from '../../pages/entities/page.entity';
 import { CtasRequestDto } from '../controllers/dtos/requests/ctas-request.dto';
 
@@ -30,6 +38,12 @@ export class Cta {
 
   @Column()
   backgroundColor: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   constructor(
     page: Page,
