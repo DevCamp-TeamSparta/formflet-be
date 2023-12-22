@@ -13,6 +13,8 @@ export class PagesDetailService {
   async createPageDetail(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start createPageDetail');
 
+    content = encodeURIComponent(content);
+
     const pageDetail: PageDetail = Builder<PageDetail>().page(page).content(content).build();
     await this.repository.save(pageDetail);
 
@@ -21,6 +23,8 @@ export class PagesDetailService {
 
   async updatePageDetail(page: Page, content: string): Promise<PageDetail> {
     this.logger.log('start updatePageDetail');
+
+    content = encodeURIComponent(content);
 
     const pageDetail: PageDetail = await this.repository.findByPage(page);
 
