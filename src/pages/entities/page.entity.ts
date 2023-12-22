@@ -64,13 +64,4 @@ export class Page {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  constructor(user: User, title: string, domain: string, url: string, pageDetail: PageDetail, pageFont: PageFont) {
-    this.user = user;
-    this.title = title;
-    this.domain = domain;
-    this.url = url;
-    this.pageDetail = pageDetail;
-    this.pageFont = pageFont;
-  }
 }
