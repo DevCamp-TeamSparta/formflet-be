@@ -51,10 +51,8 @@ export class PagesService {
     // page 저장
     await this.pagesRepository.save(page);
 
-    // notion content encode & notion content 생성
-    const content: string = encodeURIComponent(requestDto.content);
-
-    await this.pagesDetailService.createPageDetail(page, content);
+    // notion content 생성
+    await this.pagesDetailService.createPageDetail(page, requestDto.content);
 
     // default pageFont, form, cta 생성
     await this.pagesFontService.createPageFont(page);
@@ -124,6 +122,9 @@ export class PagesService {
     if (!editPage) {
       throw new NotFoundException('page not found');
     }
+
+    // pageDetail update
+    await this.pagesDetailService.updatePageDetail(editPage, requestDto.content);
 
     // font update
     await this.pagesFontService.updatePageFont(editPage, requestDto.font.type);
