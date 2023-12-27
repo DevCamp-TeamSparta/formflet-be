@@ -9,6 +9,7 @@ import { PagesModule } from './pages/pages.module';
 import { typeOrmConfig } from './configs/type-orm.config';
 import { FormsModule } from './forms/forms.module';
 import { CtasModule } from './ctas/ctas.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CtasModule } from './ctas/ctas.module';
     PagesModule,
     FormsModule,
     CtasModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
