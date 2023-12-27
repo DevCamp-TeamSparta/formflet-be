@@ -29,7 +29,7 @@ export class Form {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ type: 'longtext' })
   guide: string;
 
   @CreateDateColumn()
