@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
-import { UsersResponseDto } from '../../users/controllers/dtos/responses/users-response.dto';
 import { AuthRequestDto } from './dtos/requests/auth-request.dto';
 import { ResponseEntity } from '../../configs/response-entity';
 import { ApiOperation } from '@nestjs/swagger';
@@ -17,7 +16,7 @@ export class AuthController {
   async logIn(
     @Body() requestDto: AuthRequestDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<ResponseEntity<UsersResponseDto>> {
+  ): Promise<ResponseEntity<{ accessToken: string }>> {
     return this.service.logIn(requestDto, res);
   }
 
