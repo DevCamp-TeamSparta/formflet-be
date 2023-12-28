@@ -5,8 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { TokenService } from './token.service';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { AuthRequestDto } from '../controllers/dtos/requests/auth-request.dto';
-import { UsersResponseDto } from '../../users/controllers/dtos/responses/users-response.dto';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +14,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async logIn(requestDto: AuthRequestDto, res: Response): Promise<ResponseEntity<UsersResponseDto>> {
+  async logIn(requestDto: AuthRequestDto, res: Response): Promise<ResponseEntity<{ accessToken: string }>> {
     const user: User = await this.repository.findByEmail(requestDto.email);
 
     if (!user) {
@@ -29,10 +27,11 @@ export class AuthService {
       throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');
     }
 
-    await this.tokenService.generateAccessToken({ user, res });
+    const accessToken: string = this.tokenService.generateAccessToken(user);
+
     await this.tokenService.generateRefreshToken({ user, res });
 
-    const data: UsersResponseDto = plainToInstance(UsersResponseDto, user);
+    const data = { accessToken };
 
     return ResponseEntity.OK_WITH_DATA(`${user.name}님 환영합니다.`, data);
   }

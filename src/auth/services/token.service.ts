@@ -3,6 +3,7 @@ import { TokenRepository } from '../repository/token.repository';
 import * as bcrypt from 'bcrypt';
 import { TokenInterface } from '../interfaces/token.interface';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class TokenService {
@@ -13,8 +14,8 @@ export class TokenService {
     private readonly repository: TokenRepository,
   ) {}
 
-  async generateAccessToken({ user, res }): Promise<void> {
-    const accessToken: string = this.jwtService.sign(
+  generateAccessToken(user: User): string {
+    return this.jwtService.sign(
       {
         id: user.id,
         email: user.email,
@@ -26,8 +27,6 @@ export class TokenService {
         expiresIn: '600m',
       },
     );
-
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
   }
 
   async generateRefreshToken({ user, res }): Promise<void> {
@@ -44,7 +43,15 @@ export class TokenService {
       },
     );
 
-    res.setHeader('Refresh-Token', `Bearer ${refreshToken}`);
+    const cookieConfig = {
+      maxAge: 60000 * 60 * 24 * 14,
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    };
+
+    res.cookie('Refresh-Token', refreshToken, cookieConfig);
 
     await this.saveRefreshToken(user.id, refreshToken);
   }
