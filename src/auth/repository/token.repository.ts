@@ -5,8 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class TokenRepository extends Repository<Token> {
   constructor(
     @InjectRepository(Token)
-    private readonly tokenRepository: Repository<Token>,
+    private readonly repository: Repository<Token>,
   ) {
-    super(tokenRepository.target, tokenRepository.manager, tokenRepository.queryRunner);
+    super(repository.target, repository.manager, repository.queryRunner);
+  }
+
+  async findByUserId(userId: number) {
+    return this.repository.findOneBy({ userId });
   }
 }

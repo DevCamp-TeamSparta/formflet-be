@@ -87,12 +87,12 @@ export class PagesService {
     return ResponseEntity.OK_WITH_DATA('웹페이지 전체조회', responseDtos);
   }
 
-  async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
+  async getPageByPageId(id: number, req: Request): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('getPageByPageId');
 
     const page: Page = await this.pagesRepository.findById(id);
 
-    if (!page) throw new NotFoundException('page not found');
+    if (!page) throw new NotFoundException('Page Not Found');
 
     const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(page);
 
@@ -119,9 +119,8 @@ export class PagesService {
 
     // page 조회
     const editPage: Page = await this.pagesRepository.findById(id);
-    if (!editPage) {
-      throw new NotFoundException('page not found');
-    }
+
+    if (!editPage) throw new NotFoundException('존재하지 않는 페이지');
 
     // pageDetail update
     await this.pagesDetailService.updatePageDetail(editPage, requestDto.content);

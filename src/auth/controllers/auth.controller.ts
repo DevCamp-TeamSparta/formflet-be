@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { AuthRequestDto } from './dtos/requests/auth-request.dto';
 import { ResponseEntity } from '../../configs/response-entity';
@@ -18,6 +19,15 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseEntity<{ accessToken: string }>> {
     return this.service.logIn(requestDto, res);
+  }
+
+  @Post('/reissue')
+  @ApiOperation({ summary: 'token 재발행 API', description: 'token 재발행 API' })
+  async reissue(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ResponseEntity<{ accessToken: string }>> {
+    return this.service.reissue(req);
   }
 
   @Delete('/logout')

@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { TokenInterface } from '../interfaces/token.interface';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../users/entities/user.entity';
+import { Token } from '../entities/token.entity';
 
 @Injectable()
 export class TokenService {
@@ -24,7 +25,7 @@ export class TokenService {
       },
       {
         secret: process.env.TOKEN_SECRET_KEY,
-        expiresIn: '600m',
+        expiresIn: '1m',
       },
     );
   }
@@ -68,12 +69,28 @@ export class TokenService {
   }
 
   async deleteRefreshToken(userId: number): Promise<void> {
-    this.logger.log('start delete refreshToken');
+    this.logger.log('delete refreshToken');
 
     try {
       await this.repository.delete(userId);
     } catch (e) {
       throw new InternalServerErrorException('refreshToken 삭제 오류발생');
     }
+  }
+
+  getUserIdByRefreshToken(refreshToken: string): number {
+    const user = this.jwtService.verify(refreshToken, {
+      secret: process.env.TOKEN_SECRET_KEY,
+    });
+
+    return user.id;
+  }
+
+  async getRefreshTokenByUserId(userId: number): Promise<Token> {
+    return this.repository.findByUserId(userId);
+  }
+
+  async checkRefreshToken(rfrTokenInCookie: string, rfrTokenInDb: Token): Promise<boolean> {
+    return await bcrypt.compare(rfrTokenInCookie, rfrTokenInDb.refreshToken);
   }
 }
