@@ -6,7 +6,7 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { ApiOperation } from '@nestjs/swagger';
 import { GetUser } from '../decorator/get-user.decorator';
 import { User } from '../../users/entities/user.entity';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -31,7 +31,7 @@ export class AuthController {
   }
 
   @Delete('/logout')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '로그아웃 API', description: '로그아웃 API' })
   async logout(@GetUser() user: User): Promise<ResponseEntity<string>> {
     return this.service.logout(user);
