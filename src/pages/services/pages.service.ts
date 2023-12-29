@@ -182,7 +182,9 @@ export class PagesService {
 
   async buildTotalResponseDto(page: Page): Promise<PagesResponseDto> {
     // form reply 작성여부 확인
-    const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(page.forms[0].formDetail);
+    const formReplyStatus: boolean = await this.formsReplyService.getFormReplyStatus(
+      page.forms[page.forms.length - 1].formDetail,
+    );
 
     // formReply 작성여부 포함하여 response 생성
     const formsResponseDtos: FormsResponseDto[] = [];

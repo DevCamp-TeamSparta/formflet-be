@@ -58,8 +58,8 @@ export class PagesController {
   @Patch('edit/:id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: '페이지 편집 시 적용한 효과 저장 API',
-    description: '페이지 편집 시 적용한 효과 저장 API',
+    summary: '페이지 편집 적용 API',
+    description: '페이지 편집 적용 API',
   })
   async editPage(
     @Param('id') id: number,
