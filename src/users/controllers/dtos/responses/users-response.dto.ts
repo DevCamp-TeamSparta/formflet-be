@@ -3,17 +3,17 @@ import { Exclude, Expose } from 'class-transformer';
 @Exclude()
 export class UsersResponseDto {
   @Expose()
-  private readonly id: number;
+  readonly id: number;
 
   @Expose()
-  private readonly email: string;
+  readonly email: string;
 
   @Expose()
-  private readonly name: string;
+  readonly name: string;
 
   @Expose()
-  private readonly mobile: string;
+  readonly mobile: string;
 
   @Expose()
-  private readonly job: string;
+  readonly job: string;
 }

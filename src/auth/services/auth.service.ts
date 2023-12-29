@@ -5,17 +5,20 @@ import * as bcrypt from 'bcrypt';
 import { TokenService } from './token.service';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { AuthRequestDto } from '../controllers/dtos/requests/auth-request.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
   private readonly logger: Logger = new Logger('AuthService');
   constructor(
-    private readonly repository: UserRepository,
+    private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
   ) {}
 
   async logIn(requestDto: AuthRequestDto, res: Response): Promise<ResponseEntity<{ accessToken: string }>> {
-    const user: User = await this.repository.findByEmail(requestDto.email);
+    this.logger.log('login');
+
+    const user: User = await this.userRepository.findByEmail(requestDto.email);
 
     if (!user) {
       throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');
@@ -37,9 +40,33 @@ export class AuthService {
   }
 
   async logout(user: User): Promise<ResponseEntity<string>> {
-    this.logger.log('start logout');
+    this.logger.log('logout');
 
     await this.tokenService.deleteRefreshToken(user.id);
     return ResponseEntity.OK('정상적으로 로그아웃 되었습니다.');
+  }
+
+  async reissue(req: Request): Promise<ResponseEntity<{ accessToken: string }>> {
+    this.logger.log('reissueToken');
+
+    const rfrTokenInCookie = req.cookies['Refresh-Token'];
+
+    const userId = this.tokenService.getUserIdByRefreshToken(rfrTokenInCookie);
+
+    const rfrTokenInDb = await this.tokenService.getRefreshTokenByUserId(userId);
+
+    const isValid: boolean = await this.tokenService.checkRefreshToken(rfrTokenInCookie, rfrTokenInDb);
+
+    if (isValid) {
+      const user: User = await this.userRepository.findById(userId);
+
+      const accessToken: string = this.tokenService.generateAccessToken(user);
+
+      const data = { accessToken };
+
+      return ResponseEntity.OK_WITH_DATA(`reissue`, data);
+    }
+
+    throw new UnauthorizedException('Invalid');
   }
 }

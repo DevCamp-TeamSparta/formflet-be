@@ -11,7 +11,7 @@ export class PagesFontService {
   constructor(private readonly repository: PagesFontRepository) {}
 
   async createPageFont(page: Page): Promise<PageFont> {
-    this.logger.log('start createPageFont');
+    this.logger.log('createPageFont');
 
     const pageFont: PageFont = Builder<PageFont>().page(page).type('').build();
     await this.repository.save(pageFont);
@@ -20,7 +20,7 @@ export class PagesFontService {
   }
 
   async updatePageFont(page: Page, type: string): Promise<PageFont> {
-    this.logger.log('start updatePageFont');
+    this.logger.log('updatePageFont');
 
     const pageFont: PageFont = await this.repository.findByPage(page);
 

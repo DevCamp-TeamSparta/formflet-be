@@ -11,7 +11,7 @@ export class PagesDetailService {
   constructor(private readonly repository: PagesDetailRepository) {}
 
   async createPageDetail(page: Page, content: string): Promise<PageDetail> {
-    this.logger.log('start createPageDetail');
+    this.logger.log('createPageDetail');
 
     content = encodeURIComponent(content);
 
@@ -22,7 +22,7 @@ export class PagesDetailService {
   }
 
   async updatePageDetail(page: Page, content: string): Promise<PageDetail> {
-    this.logger.log('start updatePageDetail');
+    this.logger.log('updatePageDetail');
 
     content = encodeURIComponent(content);
 
