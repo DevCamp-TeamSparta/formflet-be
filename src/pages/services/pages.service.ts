@@ -87,7 +87,7 @@ export class PagesService {
     return ResponseEntity.OK_WITH_DATA('웹페이지 전체조회', responseDtos);
   }
 
-  async getPageByPageId(id: number, req: Request): Promise<ResponseEntity<PagesResponseDto>> {
+  async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('getPageByPageId');
 
     const page: Page = await this.pagesRepository.findById(id);

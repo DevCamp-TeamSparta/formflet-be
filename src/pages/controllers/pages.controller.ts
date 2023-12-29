@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { PagesService } from '../services/pages.service';
 import { PagesRequestDto } from './dto/requests/pages-request.dto';
 import { GetUser } from '../../auth/decorator/get-user.decorator';
@@ -6,7 +6,6 @@ import { User } from '../../users/entities/user.entity';
 import { ResponseEntity } from '../../configs/response-entity';
 import { PagesResponseDto } from './dto/responses/pages-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { PagesEditRequestDto } from './dto/requests/pages-edit-request.dto';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 
@@ -15,7 +14,7 @@ export class PagesController {
   constructor(private readonly service: PagesService) {}
 
   @Post('/register')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '노션 페이지 등록 API',
     description: '노션 페이지 등록 API',
@@ -28,7 +27,7 @@ export class PagesController {
   }
 
   @Get()
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '전체 페이지 조회 API',
     description: '전체 페이지 조회 API',
@@ -43,8 +42,8 @@ export class PagesController {
     summary: 'id로 페이지 조회 API',
     description: 'id로 페이지 조회 API',
   })
-  async getPageByPageId(@Param('id') id: number, @Req() req: Request): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.service.getPageByPageId(id, req);
+  async getPageByPageId(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.service.getPageByPageId(id);
   }
 
   @Get('release/:domain')
@@ -57,7 +56,7 @@ export class PagesController {
   }
 
   @Patch('edit/:id')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '페이지 편집 시 적용한 효과 저장 API',
     description: '페이지 편집 시 적용한 효과 저장 API',
@@ -70,7 +69,7 @@ export class PagesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '특정 노션 페이지 삭제 API',
     description: '특정 노션 페이지 삭제 API',

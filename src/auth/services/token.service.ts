@@ -25,7 +25,7 @@ export class TokenService {
       },
       {
         secret: process.env.TOKEN_SECRET_KEY,
-        expiresIn: '1m',
+        expiresIn: '5m',
       },
     );
   }
