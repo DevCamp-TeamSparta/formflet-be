@@ -3,4 +3,5 @@ export interface UserInterface {
   password: string;
   name: string;
   mobile: string;
+  job: string;
 }

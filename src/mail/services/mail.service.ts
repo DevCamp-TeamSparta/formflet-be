@@ -1,25 +1,26 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ResponseEntity } from '../../configs/response-entity';
 
 @Injectable()
 export class MailService {
+  private readonly logger: Logger = new Logger('MailService');
+
   constructor(private readonly mailerService: MailerService) {}
 
-  sendHello(): boolean {
+  sendVerificationEmail(email: string, code: number): ResponseEntity<string> {
+    this.logger.log('sendVerificationEmail');
+
     this.mailerService
       .sendMail({
-        to: 'jinu0729@gmail.com',
-        from: process.env.FORMFLET_MAIL_ADDRESS,
-        subject: 'Hello',
-        text: 'Hello World',
-        html: '<b>Hello World</b>',
-      })
-      .then((result) => {
-        console.log(result);
+        to: email,
+        subject: '[formflet] 이메일 인증입니다.',
+        html: `인증번호: ${code}`,
       })
       .catch((error) => {
         new ConflictException(error);
       });
-    return true;
+
+    return ResponseEntity.OK('이메일 발송 완료');
   }
 }

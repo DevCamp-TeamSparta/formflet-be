@@ -3,22 +3,23 @@ import { ResponseEntity } from '../../configs/response-entity';
 import { User } from '../../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { TokenService } from './token.service';
-import { UserRepository } from '../../users/repositories/user.repository';
 import { AuthRequestDto } from '../controllers/dtos/requests/auth-request.dto';
 import { Request } from 'express';
+import { UsersService } from '../../users/services/users.service';
 
 @Injectable()
 export class AuthService {
   private readonly logger: Logger = new Logger('AuthService');
+
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly usersService: UsersService,
     private readonly tokenService: TokenService,
   ) {}
 
   async logIn(requestDto: AuthRequestDto, res: Response): Promise<ResponseEntity<{ accessToken: string }>> {
     this.logger.log('login');
 
-    const user: User = await this.userRepository.findByEmail(requestDto.email);
+    const user: User = await this.usersService.findUserByEmail(requestDto.email);
 
     if (!user) {
       throw new UnauthorizedException('이메일 혹은 비밀번호를 확인해 주세요.');
@@ -55,10 +56,10 @@ export class AuthService {
 
     const rfrTokenInDb = await this.tokenService.getRefreshTokenByUserId(userId);
 
-    const isValid: boolean = await this.tokenService.checkRefreshToken(rfrTokenInCookie, rfrTokenInDb);
+    const isValid: boolean = await this.tokenService.verifyRefreshToken(rfrTokenInCookie, rfrTokenInDb);
 
     if (isValid) {
-      const user: User = await this.userRepository.findById(userId);
+      const user: User = await this.usersService.findUserByUserId(userId);
 
       const accessToken: string = this.tokenService.generateAccessToken(user);
 

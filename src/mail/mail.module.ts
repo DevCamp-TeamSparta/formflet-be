@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common';
-import { MailController } from './controllers/mail.controller';
 import { MailService } from './services/mail.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailerModule } from '@nestjs-modules/mailer';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.gmail.com',
+        host: process.env.SMTP_HOST,
         port: 587,
         auth: {
-          user: process.env.FORMFLET_MAIL_ADDRESS,
-          pass: process.env.FORMFLET_MAIL_PASSWORD,
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
         },
       },
       defaults: {
-        from: '"nest-modules" <modules@nestjs.com>',
+        from: `폼플렛 formflet <${process.env.SMTP_USER}>`,
       },
       template: {
         dir: __dirname + '/templates',
@@ -27,7 +29,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       },
     }),
   ],
-  controllers: [MailController],
   providers: [MailService],
+  exports: [MailService],
 })
 export class MailModule {}

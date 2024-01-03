@@ -1,7 +1,10 @@
-import { Body, Controller, Get, Post, Query, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Put, ValidationPipe } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { JoinRequestDto } from './dtos/requests/join-request.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { ResponseEntity } from '../../configs/response-entity';
+import { VerifyEmailRequestDto } from './dtos/requests/verify-email-request.dto';
+import { VerifyCodeRequestDto } from './dtos/requests/verify-code-request.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -12,16 +15,19 @@ export class UsersController {
     summary: '회원가입 API',
     description: '회원가입 API',
   })
-  joinUser(@Body(ValidationPipe) createUserDto: JoinRequestDto) {
-    return this.service.joinUser(createUserDto);
+  joinUser(@Body(ValidationPipe) requestDto: JoinRequestDto) {
+    return this.service.joinUser(requestDto);
   }
 
-  @Get('/check-email')
-  @ApiOperation({
-    summary: '이메일 중복체크 API',
-    description: '이메일 중복체크 API',
-  })
-  checkEmail(@Query('email') email: string) {
-    return this.service.checkEmail(email);
+  @Post('/verify-email')
+  @ApiOperation({ summary: 'email 인증 API', description: 'email 인증 API' })
+  async verifyEmail(@Body() requestDto: VerifyEmailRequestDto): Promise<ResponseEntity<string>> {
+    return this.service.verifyEmail(requestDto);
+  }
+
+  @Put('/verify-code')
+  @ApiOperation({ summary: 'email 인증 API', description: 'email 인증 API' })
+  async verifyCode(@Body() requestDto: VerifyCodeRequestDto): Promise<ResponseEntity<string>> {
+    return this.service.verifyCode(requestDto);
   }
 }

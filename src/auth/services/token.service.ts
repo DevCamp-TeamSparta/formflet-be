@@ -90,7 +90,7 @@ export class TokenService {
     return this.repository.findByUserId(userId);
   }
 
-  async checkRefreshToken(rfrTokenInCookie: string, rfrTokenInDb: Token): Promise<boolean> {
+  async verifyRefreshToken(rfrTokenInCookie: string, rfrTokenInDb: Token): Promise<boolean> {
     return await bcrypt.compare(rfrTokenInCookie, rfrTokenInDb.refreshToken);
   }
 }
