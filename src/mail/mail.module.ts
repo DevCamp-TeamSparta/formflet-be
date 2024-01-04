@@ -3,6 +3,7 @@ import { MailService } from './services/mail.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailerModule } from '@nestjs-modules/mailer';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ dotenv.config();
         from: `폼플렛 formflet <${process.env.SMTP_USER}>`,
       },
       template: {
-        dir: __dirname + '/templates',
+        dir: path.join(__dirname, './templates'),
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
