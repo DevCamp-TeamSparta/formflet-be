@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이메일 인증</title>
+</head>
+<body>
+<table
+  width="500"
+  border="0"
+  cellspacing="0"
+  cellpadding="0"
+  style="background: white; margin: auto; padding: 64px; border-collapse: collapse"
+>
+  <tr>
+    <td style="padding-bottom: 32px; text-align: center">
+      <img
+        width="131"
+        height="25"
+        src="data:image/png;base64,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"
+        alt="Formflet Logo"
+      />
+    </td>
+  </tr>
+  <tr>
+    <td
+      style="
+            color: #484848;
+            font-size: 25px;
+            font-family: Arial, sans-serif;
+            font-weight: 700;
+            word-wrap: break-word;
+            padding-bottom: 32px;
+            text-align: center;
+          "
+    >
+      이메일 인증번호가 도착했습니다.
+    </td>
+  </tr>
+  <tr>
+    <td
+      style="
+            color: #484848;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            font-weight: 400;
+            line-height: 32px;
+            word-wrap: break-word;
+            padding-bottom: 16px;
+            text-align: center;
+          "
+    >
+      안녕하세요, 폼플렛입니다.
+    </td>
+  </tr>
+  <tr>
+    <td
+      style="
+            color: #484848;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            font-weight: 400;
+            line-height: 32px;
+            word-wrap: break-word;
+            text-align: center;
+          "
+    >
+      요청하신 인증번호를 발송해 드립니다.<br />아래 인증번호를 직접 입력해주세요.
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 120px; background: #f5f6f6; padding: 24px; text-align: center">
+          <span
+            style="
+              color: #8000ff;
+              font-size: 25px;
+              font-family: Arial, sans-serif;
+              font-weight: 700;
+              word-wrap: break-word;
+            "
+          >
+            {{code}}
+          </span>
+    </td>
+  </tr>
+  <tr>
+    <td
+      style="
+            color: #9fa0a0;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            font-weight: 400;
+            word-wrap: break-word;
+            text-align: center;
+          "
+    >
+      *본 메일은 발신 전용 메일로서 회신되지 않습니다.
+    </td>
+  </tr>
+</table>
+</body>
+</html>
