@@ -8,7 +8,7 @@ export class MailService {
 
   constructor(private readonly mailerService: MailerService) {}
 
-  sendVerificationEmail(email: string, code: number): ResponseEntity<string> {
+  sendVerifyEmail(email: string, code: number): ResponseEntity<string> {
     this.logger.log('sendVerificationEmail');
 
     this.mailerService
