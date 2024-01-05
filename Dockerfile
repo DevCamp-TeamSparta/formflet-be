@@ -1,6 +1,5 @@
-#Dockerfile
-
-FROM node:16
+# Build Stage
+FROM node:18-alpine as builder
 
 WORKDIR /usr/src/app
 
@@ -10,6 +9,17 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+RUN npm run build
 
-CMD [ "npm", "run", "start" ]
+# Production Stage
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/app/package*.json ./
+
+RUN npm install --production
+
+COPY --from=builder /usr/src/app/dist ./dist
+
+ENTRYPOINT ["npm", "run", "start:dev"]
