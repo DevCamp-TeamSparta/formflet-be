@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PagesRequestDto } from '../controllers/dto/requests/pages-request.dto';
 import { PagesResponseDto } from '../controllers/dto/responses/pages-response.dto';
 import { PagesRepository } from '../repositories/pages.repository';
@@ -23,7 +23,7 @@ export class PagesService {
   private readonly logger: Logger = new Logger('PagesService');
 
   constructor(
-    private readonly pagesRepository: PagesRepository,
+    private readonly repository: PagesRepository,
     private readonly pagesDetailService: PagesDetailService,
     private readonly pagesFontService: PagesFontService,
     private readonly pagesUtils: PagesUtils,
@@ -49,7 +49,7 @@ export class PagesService {
       .build();
 
     // page 저장
-    await this.pagesRepository.save(page);
+    await this.repository.save(page);
 
     // notion content 생성
     await this.pagesDetailService.createPageDetail(page, requestDto.content);
@@ -70,7 +70,7 @@ export class PagesService {
   async getAllPagesByUserId(user: User): Promise<ResponseEntity<PagesResponseDto[]>> {
     this.logger.log('getAllPagesByUserId');
 
-    const pages: Page[] = await this.pagesRepository.findAllByUserId(user);
+    const pages: Page[] = await this.repository.findAllByUserId(user);
 
     const responseDtos: PagesResponseDto[] = [];
 
@@ -87,28 +87,34 @@ export class PagesService {
     return ResponseEntity.OK_WITH_DATA('웹페이지 전체조회', responseDtos);
   }
 
-  async getPageByPageId(id: number): Promise<ResponseEntity<PagesResponseDto>> {
+  async getPageByPageId(user: User, id: number): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('getPageByPageId');
 
-    const page: Page = await this.pagesRepository.findById(id);
+    const page: Page = await this.repository.findById(id);
 
-    if (!page) throw new NotFoundException('Page Not Found');
+    if (!page) {
+      throw new NotFoundException('페이지를 찾을 수 없음');
+    }
+
+    if (page.user.id != user.id) {
+      throw new ForbiddenException('접근 권한 없음');
+    }
 
     const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(page);
 
-    return ResponseEntity.OK_WITH_DATA('웹페이지 id로 조회', pagesResponseDto);
+    return ResponseEntity.OK_WITH_DATA('웹페이지 id로 조회 완료', pagesResponseDto);
   }
 
   async getPageByDomain(domain: string): Promise<ResponseEntity<PagesResponseDto>> {
     this.logger.log('getPageByDomain');
 
     // domain 으로 page 조회
-    const page: Page = await this.pagesRepository.findByDomain(domain);
+    const page: Page = await this.repository.findByDomain(domain);
 
     try {
       const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(page);
 
-      return ResponseEntity.OK_WITH_DATA('배포 페이지 조회', pagesResponseDto);
+      return ResponseEntity.OK_WITH_DATA('배포 페이지 조회 완료', pagesResponseDto);
     } catch (e) {
       throw new NotFoundException('존재하지 않는 도메인');
     }
@@ -118,7 +124,7 @@ export class PagesService {
     this.logger.log('editPage');
 
     // page 조회
-    const editPage: Page = await this.pagesRepository.findById(id);
+    const editPage: Page = await this.repository.findById(id);
 
     if (!editPage) throw new NotFoundException('존재하지 않는 페이지');
 
@@ -155,7 +161,7 @@ export class PagesService {
     await this.ctasService.updateCta(editPage, requestDto.cta);
 
     // 결과 조회
-    const resultPage: Page = await this.pagesRepository.findById(id);
+    const resultPage: Page = await this.repository.findById(id);
 
     const pagesResponseDto: PagesResponseDto = await this.buildTotalResponseDto(resultPage);
 
@@ -165,7 +171,7 @@ export class PagesService {
   async deletePage(id: number): Promise<ResponseEntity<string>> {
     this.logger.log('deletePage');
 
-    await this.pagesRepository.deleteById(id);
+    await this.repository.deleteById(id);
 
     return ResponseEntity.OK('페이지 삭제 완료');
   }
@@ -173,7 +179,7 @@ export class PagesService {
   async checkDomain(domain: string): Promise<void> {
     this.logger.log('checkDomain');
 
-    const page: Page = await this.pagesRepository.findByDomain(domain);
+    const page: Page = await this.repository.findByDomain(domain);
 
     if (page) {
       throw new ConflictException('이미 존재하는 도메인 입니다.');

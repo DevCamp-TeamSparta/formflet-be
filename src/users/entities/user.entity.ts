@@ -30,7 +30,6 @@ export class User {
 
   @OneToMany(() => Page, (page) => page.user, {
     cascade: true,
-    eager: true,
   })
   pages: Page[];
 }
