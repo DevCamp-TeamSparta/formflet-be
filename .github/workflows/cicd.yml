@@ -29,7 +29,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: jinu/studio-formflet:latest
+          tags: jinu0729/studio-formflet:latest
 
   deploy:
     needs: build
