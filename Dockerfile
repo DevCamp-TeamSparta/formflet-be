@@ -22,4 +22,4 @@ RUN npm install --production
 
 COPY --from=builder /usr/src/app/dist ./dist
 
-ENTRYPOINT ["npm", "run", "start:dev"]
+ENTRYPOINT ["node","dist/main.js"]
