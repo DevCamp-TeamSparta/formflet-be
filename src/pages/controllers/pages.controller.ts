@@ -42,8 +42,8 @@ export class PagesController {
     summary: 'id로 페이지 조회 API',
     description: 'id로 페이지 조회 API',
   })
-  async getPageByPageId(@Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
-    return this.service.getPageByPageId(id);
+  async getPageByPageId(@GetUser() user: User, @Param('id') id: number): Promise<ResponseEntity<PagesResponseDto>> {
+    return this.service.getPageByPageId(user, id);
   }
 
   @Get('release/:domain')
